@@ -1,0 +1,593 @@
+{
+  "initialized": true,
+  "start_time": "2026-01-16T00:42:54.865656",
+  "total_questions": 10,
+  "current_phase": "smart_brute_force",
+  "attempt_number": 20,
+  "best_score": 0,
+  "current_question_index": 6,
+  "questions": {
+    "q1": {
+      "question_text": "Question 1",
+      "options": [
+        "Stimulus, Perception, Stimulus, Concept, Response",
+        "Stimulus, Sensation, Perception, Concept, Response",
+        "Perception, Stimulus, Sensation, Concept, Response",
+        "Perception, Sensation, Stimulus, Concept, Response"
+      ],
+      "num_options": 4,
+      "current_answer_index": 3,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "ai_reasoning": "The correct sequence is Stimulus, Sensation, Perception, Concept, Response, which matches option A.",
+      "status": "testing"
+    },
+    "q2": {
+      "question_text": "Question 2",
+      "options": [
+        "Danine believes that the environment around the students determines their behavior.",
+        "Siri believes in enhancing the attribute of integrity by determining the condition.",
+        "Manut believes that in children's growing period, their Idea is an ongoing development in steps.",
+        "Kunya believes that children are the white canvas, therefore the seniors can add and decorate them."
+      ],
+      "num_options": 4,
+      "current_answer_index": 2,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "ai_reasoning": "This option suggests that children are shaped and influenced by their environment and role models, which is a developmentally appropriate perspective on childhood.",
+      "status": "testing"
+    },
+    "q3": {
+      "question_text": "Question 3",
+      "options": [
+        "All the answers are correct.",
+        "Help instructors design instruction that meets the needs of learners.",
+        "Help the family greatly know their children\u2019s behavior.",
+        "Help learners receive the appropriate care and support they need."
+      ],
+      "num_options": 4,
+      "current_answer_index": 2,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "ai_reasoning": "This option aligns with the topic of instructional design and meeting the needs of learners.",
+      "status": "testing"
+    },
+    "q4": {
+      "question_text": "Question 4",
+      "options": [
+        "The test that shows the learner's anomaly or not.",
+        "Using tools or tests that contain details and cover to assess the learner's problem.",
+        "The sending process of the learners to a specialist to indicate the learner\u2019s problems.",
+        "The process used for screening the learner risk and the learner\u2019s problem."
+      ],
+      "num_options": 4,
+      "current_answer_index": 2,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "ai_reasoning": "This option describes the process of identifying and assessing potential learning problems, which is a key aspect of screening learners.",
+      "status": "testing"
+    },
+    "q5": {
+      "question_text": "Question 5",
+      "options": [
+        "Education age is a period of preparation, the body, social emotion, and intelligence.",
+        "The teachers' duties are to conduct the learning that meets the problems and learner needs.",
+        "All the answers are correct.",
+        "Teachers will notice the social behavior and learning behavior of learners."
+      ],
+      "num_options": 4,
+      "current_answer_index": 2,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "ai_reasoning": "All options provided describe aspects of education theory and pedagogy.",
+      "status": "testing"
+    },
+    "q6": {
+      "question_text": "Question 6",
+      "options": [
+        "Freedom environment",
+        "The teacher is the center of the class.",
+        "Competitive environment",
+        "Under a strict regulation environment."
+      ],
+      "num_options": 4,
+      "current_answer_index": 3,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "ai_reasoning": "A competitive environment is where students are motivated and engaged in learning, as they strive to achieve academic excellence.",
+      "status": "testing"
+    },
+    "q7": {
+      "question_text": "Question 7",
+      "options": [
+        "Manage class by considering tidying and sunlight properly.",
+        "Manage class by considering the learning outcome of each session.",
+        "Teachers let the learner freestyle learning without any class rules",
+        "Teachers allow learners the opportunity to express their comments and equal attention and care to the learners."
+      ],
+      "num_options": 4,
+      "current_answer_index": 0,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        2,
+        0
+      ],
+      "ai_reasoning": "This option aligns with effective classroom management practices, which prioritize student learning and achievement.",
+      "status": "testing"
+    },
+    "q8": {
+      "question_text": "Question 8",
+      "options": [
+        "Readiness",
+        "Received appropriate motivation",
+        "Create appropriate motivation",
+        "Curious"
+      ],
+      "num_options": 4,
+      "current_answer_index": 2,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        2
+      ],
+      "ai_reasoning": "Based on the context of motivation and readiness, readiness seems to be a relevant concept in this context.",
+      "status": "testing"
+    },
+    "q9": {
+      "question_text": "Question 9",
+      "options": [
+        "Once, If the learner shows good behavior.",
+        "2 times, for ensuring they can certainly show good behavior.",
+        "More than 2 times, because the learners have changed current behavior to the new correct.",
+        "2 times, to compare the differences in their behavior."
+      ],
+      "num_options": 4,
+      "current_answer_index": 1,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        1
+      ],
+      "ai_reasoning": "To ensure learners can demonstrate good behavior consistently and not just initially.",
+      "status": "testing"
+    },
+    "q10": {
+      "question_text": "Question 10",
+      "options": [
+        "Junior C always cries when he encounters the dog because he was bitten by a dog once.",
+        "Junior A always cries when he wants to take a trip.",
+        "Junior D usually follows the good things like her sister because she knows that when she does good things she will be allowed to play with her friends.",
+        "Junior B immediately finishes her homework for playing her favorite game."
+      ],
+      "num_options": 4,
+      "current_answer_index": 1,
+      "locked": false,
+      "confirmed_correct_index": null,
+      "tried_indices": [
+        1
+      ],
+      "ai_reasoning": "Consistency and understanding of consequence is shown by Junior D.",
+      "status": "testing"
+    }
+  },
+  "attempt_history": [
+    {
+      "attempt_number": 0,
+      "timestamp": "2026-01-16T00:43:36.721134",
+      "score": 4,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 0,
+        "q2": 3,
+        "q3": 3,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 1,
+      "timestamp": "2026-01-16T00:43:53.204432",
+      "score": 4,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 1,
+        "q2": 3,
+        "q3": 3,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 2,
+      "timestamp": "2026-01-16T00:44:09.637172",
+      "score": 2,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 2,
+        "q2": 3,
+        "q3": 3,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 3,
+      "timestamp": "2026-01-16T00:44:26.093247",
+      "score": 1,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 3,
+        "q3": 3,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 4,
+      "timestamp": "2026-01-16T00:44:42.538621",
+      "score": 6,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 0,
+        "q3": 3,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 5,
+      "timestamp": "2026-01-16T00:44:59.024413",
+      "score": 2,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 1,
+        "q3": 3,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 6,
+      "timestamp": "2026-01-16T00:45:15.512544",
+      "score": 2,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 3,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 7,
+      "timestamp": "2026-01-16T00:45:31.954074",
+      "score": 1,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 0,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 8,
+      "timestamp": "2026-01-16T00:45:48.394679",
+      "score": 1,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 1,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 9,
+      "timestamp": "2026-01-16T00:46:04.826873",
+      "score": 2,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 3,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 10,
+      "timestamp": "2026-01-16T00:46:21.300884",
+      "score": 2,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 0,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 11,
+      "timestamp": "2026-01-16T00:46:37.788706",
+      "score": 2,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 1,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 12,
+      "timestamp": "2026-01-16T00:46:54.253024",
+      "score": 4,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 3,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 13,
+      "timestamp": "2026-01-16T00:47:10.721964",
+      "score": 4,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 0,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 14,
+      "timestamp": "2026-01-16T00:47:27.169076",
+      "score": 4,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 1,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 15,
+      "timestamp": "2026-01-16T00:47:43.630310",
+      "score": 0,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 2,
+        "q6": 2,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 16,
+      "timestamp": "2026-01-16T00:48:00.064449",
+      "score": 2,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 2,
+        "q6": 0,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 17,
+      "timestamp": "2026-01-16T00:48:16.525379",
+      "score": 3,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 2,
+        "q6": 1,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 18,
+      "timestamp": "2026-01-16T00:48:32.987875",
+      "score": 4,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 2,
+        "q6": 3,
+        "q7": 2,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    },
+    {
+      "attempt_number": 19,
+      "timestamp": "2026-01-16T00:48:49.437578",
+      "score": 1,
+      "total": 10,
+      "tested_question": null,
+      "answers": {
+        "q1": 3,
+        "q2": 2,
+        "q3": 2,
+        "q4": 2,
+        "q5": 2,
+        "q6": 3,
+        "q7": 0,
+        "q8": 2,
+        "q9": 1,
+        "q10": 1
+      }
+    }
+  ],
+  "last_updated": "2026-01-16T00:48:49.437578"
+}
