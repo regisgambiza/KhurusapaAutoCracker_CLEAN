@@ -39,10 +39,7 @@ def main():
             else:
                 logger.info("✅ Login successful")
             
-            # Step 2: Navigate to profile (optional)
-            logger.info("\n" + "="*80)
-            logger.info("STEP 2: Profile Navigation (Optional)")
-            logger.info("="*80)
+          
             
             try:
                 navigate_to_profile(page)
@@ -70,7 +67,7 @@ def main():
             num_questions = int(num_q) if num_q.isdigit() else 10
             
             logger.info(f"Solving exam with {num_questions} questions...")
-            run_ai_solver(page, num_questions=num_questions, max_attempts=20)
+            run_ai_solver(page, num_questions=num_questions, max_attempts=100)
             
             # Keep browser open for review
             logger.info("\n" + "="*80)

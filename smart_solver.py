@@ -1,379 +1,226 @@
-"""Smart Brute Force Solver with shuffle-resistant JSON tracking - IMPROVED VERSION"""
+"""
+FIXED SMART SOLVER - SEQUENTIAL ELIMINATION STRATEGY
+This works for exams with ONLY global score feedback
+"""
 
 import json
-import os
 import logging
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-
-class SmartBruteForceSolver:
+class SequentialEliminationSolver:
     """
-    SMART shuffle-resistant brute force solver that:
-    1. Uses AI for initial educated guesses
-    2. Tracks EVERYTHING by OPTION TEXT (not index) to resist shuffling
-    3. Cracks question-by-question sequentially
-    4. Locks confirmed correct answers permanently
-    5. Uses JSON for complete tracking
+    Strategy for exams with only global score feedback.
+    Works by fixing ALL answers except ONE, then testing that one.
     """
     
-    def __init__(self, ai, questions: List[Dict], json_file: str = "shuffle_progress.json"):
-        self.ai = ai
+    def __init__(self, questions: List[Dict], json_file: str = "fixed_progress.json"):
         self.questions = questions
         self.json_file = json_file
         self.state = self._load_state()
         
-        # Initialize state if new exam
         if not self.state.get('initialized'):
             self._initialize_state()
     
-    def _load_state(self) -> Dict:
-        """Load state from JSON file."""
+    def _initialize_state(self):
+        """Initialize fresh state."""
+        self.state = {
+            'initialized': True,
+            'start_time': datetime.now().isoformat(),
+            'total_questions': len(self.questions),
+            'current_question_index': 0,  # Which question we're testing
+            'base_score': None,  # Score with current "baseline" answers
+            'confirmed_answers': {},  # {q_id: option_text}
+            'candidate_answers': {},  # {q_id: option_text} - unconfirmed best guesses
+            'test_history': []
+        }
+        
+        # Start with all first options as baseline
+        for question in self.questions:
+            q_id = question['id']
+            self.state['candidate_answers'][q_id] = question['options'][0]['text']
+        
+        self._save_state()
+    
+    def get_test_set(self, current_score: Optional[int] = None) -> Dict[str, str]:
+        """
+        Get the next set of answers to test.
+        
+        Strategy:
+        1. If baseline score unknown, test baseline (all first options)
+        2. Otherwise, test ONE question at a time while fixing others
+        """
+        
+        if current_score is not None and self.state['base_score'] is None:
+            # First test - establish baseline
+            self.state['base_score'] = current_score
+            logger.info(f"[BASELINE] Baseline score: {current_score}/{self.state['total_questions']}")
+        
+        # Get current question to test
+        q_id = f"q{self.state['current_question_index'] + 1}"
+        
+        # If this question is already confirmed, move to next
+        while q_id in self.state['confirmed_answers']:
+            self.state['current_question_index'] = (self.state['current_question_index'] + 1) % self.state['total_questions']
+            q_id = f"q{self.state['current_question_index'] + 1}"
+            
+            # Check if all confirmed
+            if len(self.state['confirmed_answers']) == self.state['total_questions']:
+                logger.info("[SUCCESS] All questions confirmed!")
+                return self.state['confirmed_answers']
+        
+        # Build answer set:
+        # - Use confirmed answers where available
+        # - Use candidate answers for others
+        # - For current question, we'll test different options
+        test_answers = {}
+        
+        for i in range(self.state['total_questions']):
+            current_q_id = f"q{i+1}"
+            
+            if current_q_id in self.state['confirmed_answers']:
+                # Use confirmed answer
+                test_answers[current_q_id] = self.state['confirmed_answers'][current_q_id]
+            else:
+                # Use candidate answer
+                test_answers[current_q_id] = self.state['candidate_answers'][current_q_id]
+        
+        logger.info(f"[TESTING] Isolating question {q_id}")
+        return test_answers
+    
+    def process_result(self, score: int, total: int, tested_options: Dict[str, str]):
+        """
+        Process test result and update state.
+        
+        Logic:
+        - If this is baseline test, just record baseline
+        - If testing isolated question:
+            * If score > baseline: new option is correct
+            * If score < baseline: baseline option was correct
+            * If score = baseline: inconclusive (try another option)
+        """
+        
+        record = {
+            'timestamp': datetime.now().isoformat(),
+            'score': score,
+            'tested_question': f"q{self.state['current_question_index'] + 1}",
+            'tested_options': tested_options
+        }
+        self.state['test_history'].append(record)
+        
+        if self.state['base_score'] is None:
+            # This was baseline test
+            self.state['base_score'] = score
+            logger.info(f"[BASELINE SET] Score: {score}/{total}")
+        else:
+            # This was an isolation test
+            current_q_id = f"q{self.state['current_question_index'] + 1}"
+            current_option = tested_options[current_q_id]
+            
+            if score > self.state['base_score']:
+                # NEW option is CORRECT!
+                logger.info(f"✅ {current_q_id}: '{current_option[:50]}...' is CORRECT!")
+                self.state['confirmed_answers'][current_q_id] = current_option
+                self.state['base_score'] = score  # Update baseline
+                
+                # Move to next question
+                self.state['current_question_index'] = (self.state['current_question_index'] + 1) % self.state['total_questions']
+                
+            elif score < self.state['base_score']:
+                # NEW option is WRONG, baseline was correct
+                # Get baseline option for this question
+                baseline_q = self.questions[self.state['current_question_index']]
+                baseline_option = baseline_q['options'][0]['text']
+                
+                logger.info(f"✅ {current_q_id}: Baseline option '{baseline_option[:50]}...' is CORRECT!")
+                self.state['confirmed_answers'][current_q_id] = baseline_option
+                
+                # Move to next question
+                self.state['current_question_index'] = (self.state['current_question_index'] + 1) % self.state['total_questions']
+                
+            else:
+                # Score unchanged - try different option
+                logger.info(f"➖ {current_q_id}: Option '{current_option[:50]}...' gave same score")
+                
+                # Try next option for this question
+                question = self.questions[self.state['current_question_index']]
+                current_idx = [opt['text'] for opt in question['options']].index(current_option)
+                next_idx = (current_idx + 1) % len(question['options'])
+                next_option = question['options'][next_idx]['text']
+                
+                self.state['candidate_answers'][current_q_id] = next_option
+                
+                # If we've tried all options and score never changed, mark as unknown
+                if next_idx == 0:  # We've cycled through all options
+                    logger.warning(f"⚠️ {current_q_id}: All options give same score!")
+                    # Default to first option
+                    self.state['confirmed_answers'][current_q_id] = question['options'][0]['text']
+                    self.state['current_question_index'] = (self.state['current_question_index'] + 1) % self.state['total_questions']
+        
+        self._save_state()
+        
+        # Return status
+        confirmed = len(self.state['confirmed_answers'])
+        return {
+            'confirmed': confirmed,
+            'total': self.state['total_questions'],
+            'current_question': f"q{self.state['current_question_index'] + 1}",
+            'base_score': self.state['base_score']
+        }
+    
+    def get_next_option_for_testing(self, q_id: str) -> str:
+        """Get the next option to test for a question."""
+        q_idx = int(q_id[1:]) - 1
+        question = self.questions[q_idx]
+        
+        current_option = self.state['candidate_answers'].get(q_id)
+        if not current_option:
+            return question['options'][0]['text']
+        
+        # Find current option index
+        options_texts = [opt['text'] for opt in question['options']]
+        if current_option not in options_texts:
+            return question['options'][0]['text']
+        
+        current_idx = options_texts.index(current_option)
+        next_idx = (current_idx + 1) % len(options_texts)
+        return question['options'][next_idx]['text']
+    
+    def _load_state(self):
         if os.path.exists(self.json_file):
             try:
-                with open(self.json_file, 'r', encoding='utf-8') as f:
-                    state = json.load(f)
-                    logger.info(f"[JSON] Loaded existing progress from {self.json_file}")
-                    return state
-            except Exception as e:
-                logger.error(f"Failed to load state: {e}")
-        
+                with open(self.json_file, 'r') as f:
+                    return json.load(f)
+            except:
+                pass
         return {}
     
     def _save_state(self):
-        """Save state to JSON file."""
-        try:
-            self.state['last_updated'] = datetime.now().isoformat()
-            with open(self.json_file, 'w', encoding='utf-8') as f:
-                json.dump(self.state, indent=2, fp=f)
-            logger.info(f"[JSON] Progress saved to {self.json_file}")
-        except Exception as e:
-            logger.error(f"Failed to save state: {e}")
+        with open(self.json_file, 'w') as f:
+            json.dump(self.state, indent=2, fp=f)
     
-    def _initialize_state(self):
-        """Initialize fresh state for new exam."""
-        logger.info("[INIT] Initializing new exam tracking...")
-        
-        self.state = {
-            'initialized': True,
-            'exam_started': datetime.now().isoformat(),
-            'total_questions': len(self.questions),
-            'current_phase': 'initial_ai_attempt',
-            'current_question_index': 0,  # Which question we're currently cracking
-            'attempt_number': 0,
-            'best_score': 0,
-            'confirmed_correct': {},  # {q_id: correct_option_text}
-            'locked_questions': [],   # q_ids that are confirmed
-            'question_history': {},
-            'all_attempts': []
-        }
-        
-        # Initialize tracking for each question
-        for question in self.questions:
-            q_id = question['id']
-            self.state['question_history'][q_id] = {
-                'question_text': question['question_text'],
-                'options_history': [],  # List of all option texts seen
-                'tried_options': [],    # Option texts already tried
-                'current_best': None,   # Current best option text
-                'ai_initial_choice': None,
-                'ai_reasoning': None,
-                'test_results': []      # History of test attempts
-            }
-            
-            # Record current options
-            current_options = [opt['text'].strip() for opt in question['options']]
-            self.state['question_history'][q_id]['options_history'].append({
-                'timestamp': datetime.now().isoformat(),
-                'options': current_options
-            })
-        
-        self._save_state()
-    
-    def get_initial_ai_answers(self) -> Dict[str, str]:
-        """
-        PHASE 1: Use AI to get initial best guesses for ALL questions.
-        Returns: {question_id: selected_option_text}
-        """
-        logger.info("\n" + "="*80)
-        logger.info("[PHASE 1] AI Initial Reasoning for ALL Questions")
-        logger.info("="*80)
-        
-        answers = {}
-        
-        for question in self.questions:
-            q_id = question['id']
-            q_text = question['question_text']
-            options = [opt['text'] for opt in question['options']]
-            
-            logger.info(f"\n{q_id}: {q_text[:80]}...")
-            
-            # Ask AI for initial guess
-            selected_idx, reasoning = self.ai.answer_question(q_text, options)
-            selected_option = options[selected_idx]
-            
-            # Store in state
-            self.state['question_history'][q_id]['ai_initial_choice'] = selected_option
-            self.state['question_history'][q_id]['ai_reasoning'] = reasoning
-            self.state['question_history'][q_id]['current_best'] = selected_option
-            self.state['question_history'][q_id]['tried_options'].append(selected_option)
-            
-            answers[q_id] = selected_option
-            
-            logger.info(f"[AI] Selected: '{selected_option[:50]}...'")
-            logger.info(f"[REASON] {reasoning}")
-        
-        self.state['current_phase'] = 'smart_brute_force'
-        self.state['attempt_number'] = 1
-        self._save_state()
-        
-        return answers
-    
-    def get_next_brute_force_answers(self, current_score: int, total_questions: int) -> Tuple[Dict[str, str], str, Optional[str]]:
-        """
-        PHASE 2: Smart brute force - crack ONE question at a time.
-        
-        Returns:
-            - answers_dict: {q_id: option_text} for ALL questions
-            - status_message: Description of what's happening
-            - tested_q_id: Which question is being tested (or None if done)
-        """
-        # Update best score
-        if current_score > self.state['best_score']:
-            self.state['best_score'] = current_score
-            logger.info(f"[PROGRESS] New best score: {current_score}/{total_questions}")
-        
-        # Check if perfect score achieved
-        if current_score == total_questions:
-            logger.info("[SUCCESS] Perfect score achieved!")
-            self.state['current_phase'] = 'completed'
-            self._save_state()
-            return self._get_all_current_answers(), "PERFECT_SCORE_ACHIEVED", None
-        
-        # Get current question to crack
-        current_q_id = self._get_next_question_to_crack()
-        
-        if not current_q_id:
-            logger.warning("[WARN] All questions have been attempted!")
-            return self._get_all_current_answers(), "ALL_QUESTIONS_TRIED", None
-        
-        logger.info(f"\n[CRACKING] Now testing question: {current_q_id}")
-        
-        # Get the next untried option for this question
-        next_option = self._get_next_option_to_try(current_q_id)
-        
-        if not next_option:
-            logger.warning(f"[SKIP] {current_q_id}: No more untried options")
-            # Mark as tried all options, move to next question
-            self.state['current_question_index'] += 1
-            self._save_state()
-            return self.get_next_brute_force_answers(current_score, total_questions)
-        
-        # Get current best answers for all questions
-        all_answers = self._get_all_current_answers()
-        
-        # Update only the question we're testing
-        all_answers[current_q_id] = next_option
-        
-        # Record that we're trying this option
-        q_history = self.state['question_history'][current_q_id]
-        if next_option not in q_history['tried_options']:
-            q_history['tried_options'].append(next_option)
-        q_history['current_best'] = next_option
-        
-        logger.info(f"[TESTING] {current_q_id} → '{next_option[:50]}...'")
-        logger.info(f"          (previously tried: {len(q_history['tried_options'])-1} options)")
-        
-        self._save_state()
-        
-        return all_answers, f"TESTING_{current_q_id}", current_q_id
-    
-    def process_attempt_result(self, score: int, total: int, tested_q_id: Optional[str] = None):
-        """
-        Analyze attempt result and update state.
-        
-        Logic:
-        - If score INCREASED: new option is CORRECT (lock it)
-        - If score DECREASED: old option was CORRECT (lock old one)
-        - If score UNCHANGED: both options are WRONG (try next option)
-        """
-        previous_best = self.state['best_score']
-        
-        attempt_record = {
-            'attempt_number': self.state['attempt_number'],
-            'timestamp': datetime.now().isoformat(),
-            'score': score,
-            'total': total,
-            'tested_question': tested_q_id,
-            'previous_best_score': previous_best
-        }
-        
-        self.state['all_attempts'].append(attempt_record)
-        self.state['attempt_number'] += 1
-        
-        if tested_q_id:
-            q_history = self.state['question_history'][tested_q_id]
-            current_option = q_history['current_best']
-            tried_options = q_history['tried_options']
-            
-            if len(tried_options) >= 2:
-                # Get the previous option (the one before current)
-                previous_option = tried_options[-2] if len(tried_options) >= 2 else None
-                
-                if score > previous_best:
-                    # NEW option is CORRECT!
-                    logger.info(f"✅ [CORRECT] {tested_q_id}: '{current_option[:30]}...' is CORRECT!")
-                    self.state['confirmed_correct'][tested_q_id] = current_option
-                    self.state['locked_questions'].append(tested_q_id)
-                    self.state['best_score'] = score
-                    
-                elif score < previous_best:
-                    # NEW option is WRONG, OLD option was CORRECT
-                    logger.info(f"✅ [CORRECT] {tested_q_id}: '{previous_option[:30]}...' is CORRECT!")
-                    self.state['confirmed_correct'][tested_q_id] = previous_option
-                    self.state['locked_questions'].append(tested_q_id)
-                    # Revert to previous option
-                    q_history['current_best'] = previous_option
-                    
-                else:  # score unchanged
-                    # BOTH options are WRONG
-                    logger.info(f"❌ [BOTH WRONG] {tested_q_id}: Both options are wrong")
-                    # Current option stays, we'll try next one in next iteration
-                    
-            # Move to next question for next attempt
-            if tested_q_id in self.state['locked_questions']:
-                self.state['current_question_index'] += 1
-            # If not locked (both wrong case), we stay on same question to try next option
-        
-        self._save_state()
-    
-    def _get_next_question_to_crack(self) -> Optional[str]:
-        """Get the next question that needs cracking (not locked)."""
-        # Get question IDs in order
-        q_ids = [f'q{i+1}' for i in range(self.state['total_questions'])]
-        
-        # Start from current index
-        for i in range(self.state['current_question_index'], len(q_ids)):
-            q_id = q_ids[i]
-            
-            # Skip if already locked/confirmed
-            if q_id in self.state['locked_questions']:
-                continue
-            
-            # Check if there are untried options
-            q_history = self.state['question_history'][q_id]
-            current_options = q_history['options_history'][-1]['options']  # Latest options
-            tried_options = set(q_history['tried_options'])
-            untried_options = [opt for opt in current_options if opt not in tried_options]
-            
-            if untried_options:
-                return q_id
-        
-        return None
-    
-    def _get_next_option_to_try(self, q_id: str) -> Optional[str]:
-        """Get the next untried option for a question."""
-        q_history = self.state['question_history'][q_id]
-        
-        # Get latest available options
-        current_options = q_history['options_history'][-1]['options']
-        tried_options = set(q_history['tried_options'])
-        
-        # Find untried options
-        untried = [opt for opt in current_options if opt not in tried_options]
-        
-        if not untried:
-            return None
-        
-        # If we have AI reasoning, use it to prioritize
-        if len(untried) > 1 and q_history['ai_reasoning']:
-            # Simple heuristic: pick the one that seems most plausible
-            # In a more advanced version, you could re-query AI for ranking
-            return untried[0]
-        
-        return untried[0]
-    
-    def _get_all_current_answers(self) -> Dict[str, str]:
-        """Get current best answer for ALL questions."""
-        answers = {}
-        
-        for q_id in self.state['question_history']:
-            # If confirmed correct, use that
-            if q_id in self.state['confirmed_correct']:
-                answers[q_id] = self.state['confirmed_correct'][q_id]
-            else:
-                # Otherwise use current best guess
-                current_best = self.state['question_history'][q_id]['current_best']
-                if current_best:
-                    answers[q_id] = current_best
-                else:
-                    # Fallback to AI initial choice
-                    answers[q_id] = self.state['question_history'][q_id]['ai_initial_choice']
-        
-        return answers
-    
-    def update_question_options(self, questions: List[Dict]):
-        """Update options for all questions (called after each retest)."""
-        for question in questions:
-            q_id = question['id']
-            if q_id in self.state['question_history']:
-                current_options = [opt['text'].strip() for opt in question['options']]
-                
-                # Record new set of options
-                self.state['question_history'][q_id]['options_history'].append({
-                    'timestamp': datetime.now().isoformat(),
-                    'options': current_options
-                })
-        
-        self._save_state()
-    
-    def get_status_report(self) -> str:
-        """Generate a detailed status report."""
-        confirmed = len(self.state['confirmed_correct'])
+    def get_status(self):
+        confirmed = len(self.state['confirmed_answers'])
         total = self.state['total_questions']
-        progress = (confirmed / total) * 100 if total > 0 else 0
         
-        report = f"""
+        status = f"""
 {'='*80}
-SMART BRUTE FORCE SOLVER - STATUS REPORT
+SEQUENTIAL ELIMINATION SOLVER
 {'='*80}
-Phase: {self.state['current_phase']}
-Attempt Number: {self.state['attempt_number']}
-Best Score: {self.state['best_score']}/{total}
-Confirmed Correct: {confirmed}/{total} ({progress:.1f}%)
-Current Question Index: {self.state['current_question_index']}
-Locked Questions: {len(self.state['locked_questions'])}
+Confirmed: {confirmed}/{total}
+Baseline Score: {self.state.get('base_score', 'Unknown')}
+Current Question: q{self.state['current_question_index'] + 1}
 {'='*80}
-
-QUESTION PROGRESS:
 """
-        for i in range(total):
-            q_id = f'q{i+1}'
-            if q_id not in self.state['question_history']:
-                continue
-                
-            history = self.state['question_history'][q_id]
-            status = "✅ LOCKED" if q_id in self.state['locked_questions'] else "🔓 TESTING"
-            tried_count = len(history['tried_options'])
-            
-            current_answer = self.state['confirmed_correct'].get(q_id, history.get('current_best', ''))
-            if not current_answer:
-                current_answer = "Not yet determined"
-            
-            report += f"\n{q_id}: {status}"
-            report += f"\n  Tried options: {tried_count}"
-            report += f"\n  Current answer: {current_answer[:50]}..."
-            
-            # FIX: Safely handle None ai_reasoning
-            ai_reasoning = history.get('ai_reasoning')
-            if ai_reasoning:
-                report += f"\n  AI reasoning: {ai_reasoning[:50]}..."
-            elif q_id not in self.state['locked_questions']:
-                report += f"\n  AI reasoning: Not yet obtained"
-            
-            report += "\n"
         
-        report += f"\n{'='*80}"
-        return report
+        for i in range(total):
+            q_id = f"q{i+1}"
+            if q_id in self.state['confirmed_answers']:
+                status += f"{q_id}: ✅ '{self.state['confirmed_answers'][q_id][:50]}...'\n"
+            else:
+                status += f"{q_id}: 🔄 Testing...\n"
+        
+        status += "="*80
+        return status
