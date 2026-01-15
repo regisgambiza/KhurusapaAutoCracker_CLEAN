@@ -1,4 +1,4 @@
-"""AI-Powered Exam Solver using Ollama llama3.1:8b - SEQUENTIAL ELIMINATION VERSION - FIXED"""
+"""AI-Powered Exam Solver using Ollama llama3.1:8b - IMPROVED VERSION"""
 
 import logging
 import json
@@ -14,12 +14,11 @@ logger = logging.getLogger(__name__)
 
 class SequentialEliminationSolver:
     """
-    Strategy for exams with only global score feedback.
-    Works by fixing ALL answers except ONE, then testing that one.
-    FIXED VERSION: Only confirms answers when score CHANGES
+    IMPROVED SOLVER - Only confirms answers when perfect score is achieved.
+    Uses systematic testing with best-answer tracking.
     """
     
-    def __init__(self, questions: List[Dict], json_file: str = "sequential_progress.json"):
+    def __init__(self, questions: List[Dict], json_file: str = "improved_progress.json"):
         self.questions = questions
         self.json_file = json_file
         self.state = self._load_state()
@@ -27,40 +26,7 @@ class SequentialEliminationSolver:
         if not self.state.get('initialized'):
             self._initialize_state()
         else:
-            # Ensure all required keys exist in loaded state
             self._migrate_state()
-    
-    def _migrate_state(self):
-        """Migrate old state to new format if needed."""
-        # Ensure 'tried_options' exists
-        if 'tried_options' not in self.state:
-            self.state['tried_options'] = {}
-        
-        # Convert any lists in tried_options back to sets
-        for q_id, tried in self.state['tried_options'].items():
-            if isinstance(tried, list):
-                self.state['tried_options'][q_id] = set(tried)
-        
-        # Ensure all questions have entries in tried_options
-        for question in self.questions:
-            q_id = question['id']
-            if q_id not in self.state['tried_options']:
-                if q_id in self.state['candidate_answers']:
-                    self.state['tried_options'][q_id] = set([self.state['candidate_answers'][q_id]])
-                else:
-                    self.state['tried_options'][q_id] = set([question['options'][0]['text']])
-        
-        # Ensure 'phase' exists
-        if 'phase' not in self.state:
-            self.state['phase'] = 'testing_questions'
-        
-        # Ensure 'perfect_score_achieved' exists
-        if 'perfect_score_achieved' not in self.state:
-            self.state['perfect_score_achieved'] = False
-        
-        # Ensure total_questions matches current questions
-        if self.state.get('total_questions', 0) != len(self.questions):
-            self.state['total_questions'] = len(self.questions)
     
     def _initialize_state(self):
         """Initialize fresh state."""
@@ -68,295 +34,279 @@ class SequentialEliminationSolver:
             'initialized': True,
             'start_time': datetime.now().isoformat(),
             'total_questions': len(self.questions),
-            'current_question_index': 0,
-            'base_score': None,
-            'confirmed_answers': {},  # {q_id: option_text}
-            'candidate_answers': {},  # {q_id: option_text} - current best guess
-            'tried_options': {},      # {q_id: Set(text)} - track tried options
+            'confirmed_answers': {},      # Only when perfect score achieved
+            'best_answers': {},           # Current best known combination
+            'best_score': 0,              # Best score achieved so far
+            'question_scores': {},        # {q_id: {option: best_score_with_this_option}}
             'test_history': [],
-            'phase': 'establishing_baseline',
             'perfect_score_achieved': False,
             'last_score': None,
-            'unconfirmed_questions': [f"q{i+1}" for i in range(len(self.questions))]  # Track unconfirmed questions
+            'unconfirmed_questions': [f"q{i+1}" for i in range(len(self.questions))]
         }
         
-        # Start with all first options as baseline
+        # Start with all first options
         for question in self.questions:
             q_id = question['id']
-            self.state['candidate_answers'][q_id] = question['options'][0]['text']
-            self.state['tried_options'][q_id] = set([question['options'][0]['text']])
+            self.state['best_answers'][q_id] = question['options'][0]['text']
+            self.state['question_scores'][q_id] = {}
         
         self._save_state()
     
+    def _migrate_state(self):
+        """Ensure state has all required fields."""
+        defaults = {
+            'confirmed_answers': {},
+            'best_answers': {},
+            'best_score': 0,
+            'question_scores': {},
+            'test_history': [],
+            'perfect_score_achieved': False,
+            'last_score': None,
+            'unconfirmed_questions': [f"q{i+1}" for i in range(len(self.questions))]
+        }
+        
+        for key, default_value in defaults.items():
+            if key not in self.state:
+                self.state[key] = default_value
+        
+        # Ensure question_scores has entries for all questions
+        for question in self.questions:
+            q_id = question['id']
+            if q_id not in self.state.get('question_scores', {}):
+                self.state['question_scores'][q_id] = {}
+            if q_id not in self.state.get('best_answers', {}):
+                self.state['best_answers'][q_id] = question['options'][0]['text']
+    
     def get_test_set(self, current_score: Optional[int] = None) -> Dict[str, str]:
-        """
-        Get the next set of answers to test.
+        """Get next answer combination to test using exhaustive search."""
         
-        Strategy:
-        1. If baseline score unknown, test baseline (all first options)
-        2. Otherwise, test ONE question at a time while fixing others
-        """
-        
-        # Check if all confirmed
-        if len(self.state['confirmed_answers']) == self.state['total_questions']:
-            logger.info("[SUCCESS] All questions confirmed!")
-            return self.state['confirmed_answers']
-        
-        # If we're still establishing baseline
-        if self.state['phase'] == 'establishing_baseline' and current_score is not None:
-            self.state['base_score'] = current_score
+        # Update last score
+        if current_score is not None:
             self.state['last_score'] = current_score
-            self.state['phase'] = 'testing_questions'
-            logger.info(f"[BASELINE] Baseline score established: {current_score}/{self.state['total_questions']}")
-            self._save_state()
+            
+            # Update best score if this is better
+            if current_score > self.state['best_score']:
+                self.state['best_score'] = current_score
+                logger.info(f"🎯 NEW BEST SCORE: {current_score}/{self.state['total_questions']}")
         
-        # If we don't have a baseline yet, return baseline set
-        if self.state['base_score'] is None:
-            logger.info("[TESTING] Testing baseline (all first options)...")
-            return {q['id']: q['options'][0]['text'] for q in self.questions}
-        
-        # Find next unconfirmed question to test
-        if not self.state['unconfirmed_questions']:
-            logger.info("[SUCCESS] All questions confirmed!")
+        # Check if we already have perfect score
+        if self.state['perfect_score_achieved']:
+            logger.info("✅ Perfect score already achieved!")
             return self.state['confirmed_answers']
         
-        # Get current question to test (first in unconfirmed list)
-        current_q_id = self.state['unconfirmed_questions'][0]
+        # If all confirmed, return them
+        if len(self.state['confirmed_answers']) == self.state['total_questions']:
+            return self.state['confirmed_answers']
         
-        # Build answer set:
-        test_answers = {}
+        # Start with current best answers
+        test_answers = self.state['best_answers'].copy()
+        
+        # Find which question to vary next
+        # Strategy: For each question, try all options and pick the one that gives best score
+        focus_q_id = None
+        next_option = None
+        
+        # Try to find a question with untried options
+        for i in range(self.state['total_questions']):
+            q_id = f"q{i+1}"
+            question = next((q for q in self.questions if q['id'] == q_id), None)
+            if not question:
+                continue
+            
+            # Get all options for this question
+            all_options = [opt['text'] for opt in question['options']]
+            tried_options = set(self.state['question_scores'].get(q_id, {}).keys())
+            
+            # Find untried options
+            untried = [opt for opt in all_options if opt not in tried_options]
+            
+            if untried:
+                focus_q_id = q_id
+                next_option = untried[0]
+                test_answers[q_id] = next_option
+                logger.info(f"🔄 Testing {q_id} with option {len(tried_options)+1}/{len(all_options)}: '{next_option[:50]}...'")
+                break
+        
+        # If all questions have been tried with all options, pick best combination
+        if focus_q_id is None:
+            logger.info("⚠️ All options tried for all questions. Using best known combination.")
+            # For each question, pick the option that gave the best score
+            for i in range(self.state['total_questions']):
+                q_id = f"q{i+1}"
+                q_scores = self.state['question_scores'].get(q_id, {})
+                if q_scores:
+                    best_option = max(q_scores.items(), key=lambda x: x[1])[0]
+                    test_answers[q_id] = best_option
+        
+        return test_answers
+    
+    def _get_next_question_to_test(self) -> Optional[str]:
+        """Find which question to test next - prioritize least-tested questions."""
+        # Find questions that haven't been fully explored
+        min_tested = float('inf')
+        next_q = None
         
         for i in range(self.state['total_questions']):
             q_id = f"q{i+1}"
-            question = self.questions[i]
-            
-            if q_id in self.state['confirmed_answers']:
-                # Use confirmed answer
-                test_answers[q_id] = self.state['confirmed_answers'][q_id]
-            elif q_id == current_q_id:
-                # For the question we're testing, use current candidate
-                candidate = self.state['candidate_answers'].get(q_id, question['options'][0]['text'])
-                test_answers[q_id] = candidate
-            else:
-                # For other unconfirmed questions, use baseline (first option)
-                test_answers[q_id] = question['options'][0]['text']
+            if q_id not in self.state['confirmed_answers']:
+                question = next((q for q in self.questions if q['id'] == q_id), None)
+                if question:
+                    tried_count = len(self.state['question_scores'].get(q_id, {}))
+                    total_options = len(question['options'])
+                    
+                    # Prioritize questions with fewer tested options
+                    if tried_count < total_options and tried_count < min_tested:
+                        min_tested = tried_count
+                        next_q = q_id
         
-        logger.info(f"[TESTING] Isolating question {current_q_id} (testing: '{test_answers[current_q_id][:50]}...')")
-        return test_answers
+        # If all questions fully tested, return first unconfirmed
+        if next_q is None:
+            for i in range(self.state['total_questions']):
+                q_id = f"q{i+1}"
+                if q_id not in self.state['confirmed_answers']:
+                    return q_id
+        
+        return next_q
+    
+    def _get_next_option_to_try(self, q_id: str) -> Optional[str]:
+        """Get next option to try for a question."""
+        question = next((q for q in self.questions if q['id'] == q_id), None)
+        if not question:
+            return None
+        
+        # Find options we haven't tried yet
+        tried_options = set(self.state['question_scores'].get(q_id, {}).keys())
+        all_options = [opt['text'] for opt in question['options']]
+        
+        # Return first untried option
+        for option in all_options:
+            if option not in tried_options:
+                return option
+        
+        # All options tried - return the one with best score
+        if self.state['question_scores'].get(q_id):
+            best_option = max(
+                self.state['question_scores'][q_id].items(),
+                key=lambda x: x[1]
+            )[0]
+            return best_option
+        
+        return all_options[0]
     
     def process_result(self, score: int, total: int, tested_options: Dict[str, str]):
-        """
-        Process test result and update state.
-        FIXED: Only confirm answers when score CHANGES from baseline
-        """
+        """Process test result - ONLY confirm when perfect score achieved."""
         
-        if not self.state['unconfirmed_questions']:
-            return {
-                'confirmed': len(self.state['confirmed_answers']),
-                'total': self.state['total_questions'],
-                'current_question': 'None',
-                'base_score': self.state['base_score'],
-                'perfect_score': self.state['perfect_score_achieved']
-            }
-        
-        current_q_id = self.state['unconfirmed_questions'][0]
-        
+        # Record test
         record = {
             'timestamp': datetime.now().isoformat(),
             'score': score,
-            'tested_question': current_q_id,
-            'tested_option': tested_options.get(current_q_id, ""),
-            'phase': self.state['phase']
+            'total': total,
+            'tested_options': {k: v[:50] + '...' if len(v) > 50 else v 
+                             for k, v in tested_options.items()}
         }
         self.state['test_history'].append(record)
         
-        if self.state['phase'] == 'establishing_baseline':
-            # This was baseline test
-            self.state['base_score'] = score
-            self.state['last_score'] = score
-            self.state['phase'] = 'testing_questions'
-            logger.info(f"[BASELINE SET] Score: {score}/{total}")
-        else:
-            # This was an isolation test
-            current_option = tested_options.get(current_q_id, "")
+        # Update last score
+        self.state['last_score'] = score
+        
+        # CHECK FOR PERFECT SCORE - This is the ONLY way to confirm answers
+        if score == total:
+            logger.info("🎉 PERFECT SCORE ACHIEVED! All answers are now CONFIRMED!")
+            self.state['perfect_score_achieved'] = True
+            self.state['confirmed_answers'] = tested_options.copy()
+            self.state['best_answers'] = tested_options.copy()
+            self.state['best_score'] = score
+            self.state['unconfirmed_questions'] = []
+            self._save_state()
+            return {
+                'confirmed': total,
+                'total': total,
+                'best_score': score,
+                'perfect_score': True
+            }
+        
+        # CRITICAL FIX: Track EVERY option that was tested, not just changed ones
+        # Record score for ALL tested options
+        for q_id, option in tested_options.items():
+            if q_id not in self.state['question_scores']:
+                self.state['question_scores'][q_id] = {}
             
-            # SPECIAL CASE: If we got perfect score, mark all as confirmed
-            if score == total:
-                logger.info("🎉 PERFECT SCORE ACHIEVED!")
-                self.state['perfect_score_achieved'] = True
-                # Confirm all answers that were tested
-                for q_id, opt in tested_options.items():
-                    self.state['confirmed_answers'][q_id] = opt
-                    if q_id in self.state['unconfirmed_questions']:
-                        self.state['unconfirmed_questions'].remove(q_id)
-                self._save_state()
-                return {
-                    'confirmed': total,
-                    'total': total,
-                    'current_question': 'None',
-                    'base_score': score,
-                    'perfect_score': True
-                }
-            
-            # Update last score
-            self.state['last_score'] = score
-            
-            # Track this option as tried
-            if current_q_id not in self.state['tried_options']:
-                self.state['tried_options'][current_q_id] = set()
-            self.state['tried_options'][current_q_id].add(current_option)
-            
-            # Compare with baseline score
-            if self.state['base_score'] is None:
-                self.state['base_score'] = score
-            
-            if score > self.state['base_score']:
-                # NEW option is CORRECT! (Score increased)
-                logger.info(f"✅ {current_q_id}: '{current_option[:50]}...' is CORRECT! (Score increased from {self.state['base_score']} to {score})")
-                self.state['confirmed_answers'][current_q_id] = current_option
-                self.state['base_score'] = score  # Update baseline
+            # Only record if this is a new option we haven't tried
+            if option not in self.state['question_scores'][q_id]:
+                self.state['question_scores'][q_id][option] = score
                 
-                # Remove from unconfirmed list
-                if current_q_id in self.state['unconfirmed_questions']:
-                    self.state['unconfirmed_questions'].remove(current_q_id)
-                
-                # Reset candidate for this question
-                self.state['candidate_answers'][current_q_id] = current_option
-                
-            elif score < self.state['base_score']:
-                # NEW option is WRONG (Score decreased)
-                # This means the previous answer for this question was correct
-                # But we don't know which one, so we need to find it
-                logger.info(f"❌ {current_q_id}: Option '{current_option[:50]}...' is WRONG (Score decreased from {self.state['base_score']} to {score})")
-                
-                # Try next option
-                if not self._try_next_option(current_q_id):
-                    # If no more options, this question is problematic
-                    logger.warning(f"⚠️ {current_q_id}: All options tried but none increased score")
-                    # Move to next question without confirming
-                    if current_q_id in self.state['unconfirmed_questions']:
-                        self.state['unconfirmed_questions'].pop(0)
-                
-                # Restore baseline score (since this option was wrong)
-                self.state['base_score'] = self.state['last_score']
-                
-            else:
-                # Score unchanged - inconclusive
-                logger.info(f"➖ {current_q_id}: Option '{current_option[:50]}...' gave same score ({score})")
-                
-                # Try next option for this question
-                if not self._try_next_option(current_q_id):
-                    # If no more options, move to next question
-                    logger.info(f"🔄 {current_q_id}: All options tried with same score, moving to next question")
-                    if current_q_id in self.state['unconfirmed_questions']:
-                        self.state['unconfirmed_questions'].pop(0)
+                question = next((q for q in self.questions if q['id'] == q_id), None)
+                if question:
+                    tried = len(self.state['question_scores'][q_id])
+                    total_opts = len(question['options'])
+                    logger.info(f"📊 {q_id}: '{option[:30]}...' → score {score} ({tried}/{total_opts} options tried)")
+        
+        # Update best score and answers if this is an improvement
+        if score > self.state['best_score']:
+            self.state['best_score'] = score
+            self.state['best_answers'] = tested_options.copy()
+            logger.info(f"📈 New best score: {score}/{total}!")
         
         self._save_state()
         
-        # Return status
-        confirmed = len(self.state['confirmed_answers'])
-        current_q = self.state['unconfirmed_questions'][0] if self.state['unconfirmed_questions'] else 'None'
-        
         return {
-            'confirmed': confirmed,
+            'confirmed': len(self.state['confirmed_answers']),
             'total': self.state['total_questions'],
-            'current_question': current_q,
-            'base_score': self.state['base_score'],
+            'best_score': self.state['best_score'],
             'perfect_score': self.state['perfect_score_achieved']
         }
-    
-    def _try_next_option(self, q_id: str) -> bool:
-        """Try the next option for a question. Returns True if successful."""
-        q_idx = int(q_id[1:]) - 1
-        question = self.questions[q_idx]
-        
-        current_option = self.state['candidate_answers'].get(q_id, question['options'][0]['text'])
-        options_texts = [opt['text'] for opt in question['options']]
-        
-        if current_option in options_texts:
-            current_idx = options_texts.index(current_option)
-        else:
-            current_idx = -1
-        
-        # Ensure tried_options set exists for this question
-        if q_id not in self.state['tried_options']:
-            self.state['tried_options'][q_id] = set([current_option])
-        
-        # Try next option that hasn't been tried
-        for next_idx in range(len(options_texts)):
-            next_option = options_texts[next_idx]
-            if next_option not in self.state['tried_options'][q_id]:
-                self.state['candidate_answers'][q_id] = next_option
-                logger.info(f"🔄 {q_id}: Trying next option: '{next_option[:50]}...'")
-                return True
-        
-        # All options tried
-        return False
     
     def _load_state(self):
         if os.path.exists(self.json_file):
             try:
                 with open(self.json_file, 'r') as f:
-                    state = json.load(f)
-                
-                # Convert lists in tried_options back to sets
-                if 'tried_options' in state:
-                    for q_id, tried in state['tried_options'].items():
-                        if isinstance(tried, list):
-                            state['tried_options'][q_id] = set(tried)
-                
-                return state
+                    return json.load(f)
             except Exception as e:
                 logger.error(f"Error loading state: {e}")
-                pass
         return {}
     
     def _save_state(self):
         try:
-            # Convert sets to lists for JSON serialization
-            state_to_save = self.state.copy()
-            if 'tried_options' in state_to_save:
-                state_to_save['tried_options'] = {k: list(v) for k, v in state_to_save['tried_options'].items()}
-            
             with open(self.json_file, 'w') as f:
-                json.dump(state_to_save, indent=2, fp=f)
+                json.dump(self.state, indent=2, fp=f)
         except Exception as e:
             logger.error(f"Error saving state: {e}")
     
     def get_status(self):
         confirmed = len(self.state.get('confirmed_answers', {}))
         total = self.state.get('total_questions', len(self.questions))
+        best_score = self.state.get('best_score', 0)
         
         status = f"""
 {'='*80}
-SEQUENTIAL ELIMINATION SOLVER (FIXED VERSION)
+IMPROVED SEQUENTIAL SOLVER
 {'='*80}
-Phase: {self.state.get('phase', 'unknown')}
+Perfect Score: {'✅ YES' if self.state.get('perfect_score_achieved', False) else '❌ NO'}
+Best Score: {best_score}/{total}
+Last Score: {self.state.get('last_score', 'N/A')}
 Confirmed: {confirmed}/{total}
-Baseline Score: {self.state.get('base_score', 'Unknown')}
-Last Score: {self.state.get('last_score', 'Unknown')}
-Unconfirmed Questions: {len(self.state.get('unconfirmed_questions', []))}
-Perfect Score Achieved: {self.state.get('perfect_score_achieved', False)}
 {'='*80}
 """
         
+        # Show current best answers
         for i in range(total):
             q_id = f"q{i+1}"
-            if i < len(self.questions):
-                question = self.questions[i]
-            else:
-                continue
-            
             if q_id in self.state.get('confirmed_answers', {}):
                 answer = self.state['confirmed_answers'][q_id]
-                status += f"{q_id}: ✅ '{answer[:50]}...'\n"
-            else:
-                candidate = self.state.get('candidate_answers', {}).get(q_id, 'Unknown')
-                tried_options = self.state.get('tried_options', {})
-                tried_set = tried_options.get(q_id, set())
-                tried_count = len(tried_set) if isinstance(tried_set, set) else len(tried_set)
-                options_count = len(question['options'])
-                status += f"{q_id}: 🔄 Testing ({tried_count}/{options_count} tried) - '{candidate[:50]}...'\n"
+                status += f"{q_id}: ✅ CONFIRMED '{answer[:50]}...'\n"
+            elif q_id in self.state.get('best_answers', {}):
+                answer = self.state['best_answers'][q_id]
+                tried = len(self.state.get('question_scores', {}).get(q_id, {}))
+                question = next((q for q in self.questions if q['id'] == q_id), None)
+                total_opts = len(question['options']) if question else 0
+                
+                # Show score info for this question's options
+                q_scores = self.state.get('question_scores', {}).get(q_id, {})
+                if q_scores:
+                    best_opt_score = max(q_scores.values()) if q_scores else 0
+                    status += f"{q_id}: 🔄 TESTING ({tried}/{total_opts} tried, best: {best_opt_score}) '{answer[:40]}...'\n"
+                else:
+                    status += f"{q_id}: 🔄 TESTING ({tried}/{total_opts} tried) '{answer[:50]}...'\n"
         
         status += "="*80
         return status
@@ -492,7 +442,7 @@ class AIExamSolver:
         """Get answers using sequential elimination strategy."""
         if self.sequential_solver is None:
             self.sequential_solver = SequentialEliminationSolver(self.questions)
-            logger.info("[NEW SOLVER] Sequential elimination solver initialized")
+            logger.info("[NEW SOLVER] Improved sequential solver initialized")
         
         # Update last score if provided
         if last_score is not None:
@@ -505,10 +455,6 @@ class AIExamSolver:
         if self.sequential_solver.state.get('perfect_score_achieved', False):
             logger.info("[DONE] Perfect score already achieved!")
             self.perfect_score_achieved = True
-            return False
-        
-        if len(test_answers) == len(self.sequential_solver.state.get('confirmed_answers', {})):
-            logger.info("[DONE] All questions confirmed!")
             return False
         
         # Convert to our format
@@ -553,7 +499,7 @@ class AIExamSolver:
             if result.get('perfect_score', False):
                 self.perfect_score_achieved = True
             
-            logger.info(f"Confirmed: {result['confirmed']}/{total}, Baseline: {result['base_score']}")
+            logger.info(f"Confirmed: {result['confirmed']}/{total}, Best Score: {result['best_score']}")
             logger.info(self.sequential_solver.get_status())
 
     def click_answers(self) -> bool:
@@ -705,16 +651,9 @@ class AIExamSolver:
                 
                 # Try different submit button selectors
                 submit_selectors = [
-                    # By role button
                     lambda: self.page.get_by_role("button", name=re.compile(r"submit|finish|send|complete", re.I)).first.click(),
-                    
-                    # By text
                     lambda: self.page.get_by_text(re.compile(r"submit|finish", re.I)).first.click(),
-                    
-                    # By input type submit
                     lambda: self.page.locator("input[type='submit']").first.click(),
-                    
-                    # By button with type submit
                     lambda: self.page.locator("button[type='submit']").first.click(),
                 ]
                 
@@ -723,17 +662,16 @@ class AIExamSolver:
                     try:
                         selector()
                         clicked = True
-                        time.sleep(2)  # Wait for submission
+                        time.sleep(2)
                         break
                     except Exception as e:
                         logger.debug(f"Submit selector failed: {e}")
                         continue
                 
                 if not clicked:
-                    # Try clicking any button that might be submit
                     all_buttons = self.page.locator("button")
                     button_count = all_buttons.count()
-                    for i in range(min(button_count, 10)):  # Check first 10 buttons
+                    for i in range(min(button_count, 10)):
                         try:
                             btn_text = all_buttons.nth(i).inner_text().lower()
                             if any(word in btn_text for word in ["submit", "finish", "send", "complete"]):
@@ -756,46 +694,42 @@ class AIExamSolver:
                 
                 # Try different score patterns
                 score_patterns = [
-                    r'(\d+)\s*\/\s*(\d+)',  # 3/10
-                    r'Score:\s*(\d+)\s*\/\s*(\d+)',  # Score: 3/10
-                    r'(\d+)\s*of\s*(\d+)',  # 3 of 10
-                    r'Result:\s*(\d+)\s*\/\s*(\d+)',  # Result: 3/10
-                    r'Your score:\s*(\d+)\s*\/\s*(\d+)',  # Your score: 3/10
-                    r'(\d+)\s*out of\s*(\d+)',  # 3 out of 10
+                    r'(\d+)\s*\/\s*(\d+)',
+                    r'Score:\s*(\d+)\s*\/\s*(\d+)',
+                    r'(\d+)\s*of\s*(\d+)',
+                    r'Result:\s*(\d+)\s*\/\s*(\d+)',
+                    r'Your score:\s*(\d+)\s*\/\s*(\d+)',
+                    r'(\d+)\s*out of\s*(\d+)',
                 ]
                 
                 for pattern in score_patterns:
                     matches = re.findall(pattern, page_text, re.IGNORECASE)
                     if matches:
-                        # Take the first match that makes sense
                         for match in matches:
                             if len(match) >= 2:
                                 try:
                                     score_val = int(match[0])
                                     total_val = int(match[1])
-                                    # Validate that the score is reasonable
                                     if 0 <= score_val <= total_val and total_val <= self.num_questions * 2:
                                         logger.info(f"Found score with pattern '{pattern}': {score_val}/{total_val}")
                                         return score_val, total_val, score_val == total_val
                                 except ValueError:
                                     continue
                 
-                # If no pattern matched, try to extract just numbers
+                # Extract just numbers
                 all_numbers = re.findall(r'\b\d+\b', page_text)
                 if len(all_numbers) >= 2:
-                    # Look for pairs that might be scores
                     for i in range(len(all_numbers) - 1):
                         try:
                             score_val = int(all_numbers[i])
                             total_val = int(all_numbers[i+1])
-                            # Check if this looks like a score
                             if 0 <= score_val <= total_val and total_val <= self.num_questions * 2:
                                 logger.info(f"Found score as number pair: {score_val}/{total_val}")
                                 return score_val, total_val, score_val == total_val
                         except ValueError:
                             continue
                 
-                # If we still haven't found a score, check if there's a success message
+                # Check for success message
                 if any(word in page_text.lower() for word in ["passed", "success", "completed", "perfect"]):
                     logger.info("Found success message, assuming perfect score")
                     return self.num_questions, self.num_questions, True
@@ -816,15 +750,9 @@ class AIExamSolver:
         try:
             logger.info("Retesting → looking for reset button...")
             
-            # Try different retest button selectors
             retest_selectors = [
-                # By role button
                 lambda: self.page.get_by_role("button", name=re.compile(r"retest|try again|redo|restart|again|new attempt", re.I)).first.click(),
-                
-                # By text
                 lambda: self.page.get_by_text(re.compile(r"retest|try again|redo", re.I)).first.click(),
-                
-                # By link
                 lambda: self.page.get_by_role("link", name=re.compile(r"retake|try again", re.I)).first.click(),
             ]
             
@@ -854,9 +782,7 @@ class AIExamSolver:
             
             self.num_questions = len(self.questions)
             
-            # Create new solver with updated questions
-            self.sequential_solver = SequentialEliminationSolver(self.questions)
-            
+            # Keep existing solver (don't create new one)
             logger.info("[RESET] Exam reset for next attempt")
             return True
             
@@ -865,7 +791,7 @@ class AIExamSolver:
             return False
 
 
-def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 30):
+def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 100):
     ai = OllamaAI()
     solver = AIExamSolver(page, ai)
     
@@ -925,16 +851,10 @@ def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 30):
             logger.info("Max attempts reached.")
             break
         
-        # Check if solver has confirmed all questions
-        if solver.sequential_solver and len(solver.sequential_solver.state.get('confirmed_answers', {})) >= num_questions:
-            logger.info("✅ All questions confirmed!")
-            break
-        
         # Retest for next attempt
         logger.info("\nPreparing for next attempt...")
         if not solver.retest(num_questions):
             logger.error("Retest failed!")
-            # Try to continue anyway
             time.sleep(3)
     
     logger.info("\n" + "="*80)
@@ -948,10 +868,8 @@ def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 30):
         
         if solver.perfect_score_achieved:
             logger.info("✅ PERFECT SCORE ACHIEVED!")
-        elif confirmed == num_questions:
-            logger.info("✅ All questions confirmed!")
         else:
-            logger.info(f"⚠️ Only {confirmed}/{num_questions} questions confirmed")
+            logger.info(f"⚠️ Best score achieved: {solver.sequential_solver.state.get('best_score', 0)}/{num_questions}")
     
     logger.info(f"Final score: {last_score}/{num_questions}")
     logger.info(f"Total attempts: {attempt}")
