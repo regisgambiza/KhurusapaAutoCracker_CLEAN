@@ -35,7 +35,7 @@ def main():
             
             if not login(page, EXAM_EMAIL, EXAM_PASSWORD):
                 logger.warning("⚠️ Auto-login failed")
-                input("Please login manually in the browser, then press Enter...")
+                # input("Please login manually in the browser, then press Enter...")
             else:
                 logger.info("✅ Login successful")
             
