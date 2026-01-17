@@ -1,6 +1,6 @@
 {
   "initialized": true,
-  "start_time": "2026-01-17T23:30:02.044919",
+  "start_time": "2026-01-18T00:09:15.570476",
   "total_questions": 10,
   "confirmed_answers": {},
   "best_answers": {
@@ -8,327 +8,283 @@
     "q2": "Providing scholarships to students. in need of financial support.",
     "q3": "\u201cYou regret it because made your friend sad; let\u2019s see how we can figure out this problem better.\u201d",
     "q4": "\"I have an appointment with another student today. Would it be convenient for you to see me tomorrow after school?\"",
-    "q5": "Active listening, Summarizing.",
+    "q5": "Reflection of feeling, Questioning.",
     "q6": "\u201cI\u2019m concerned about you, could you tell me what is happening so we can find ways to figure it out.\u201d",
     "q7": "Teacher A explains her confidentiality limitation to the students who receive online counseling.",
     "q8": "To emphasize preventing and encouraging emotional and social learning, including resilience in students and teachers.",
-    "q9": "Mental health untreated -> mind fragility -> problems coping",
+    "q9": "Received trauma impact -> perception in situation -> incapable of solving the problems in the current methods used.",
     "q10": "Emotional surveys through deep and understanding listening."
   },
-  "best_score": 7,
+  "best_score": 9,
   "question_scores": {
     "q1": {
-      "School B surveys student information individually before providing guidance services to meet students' needs.": 3,
-      "School A focuses on educational and career guidance only in Grades 9 and 12 students.": 2,
-      "School C allows students\u2019 instructors to provide appropriate lesson plans to their undecided students.": 2,
-      "School D emphasizes promoting academic lessons to help students achieve university admission.": 2
+      "School C allows students\u2019 instructors to provide appropriate lesson plans to their undecided students.": 4,
+      "School A focuses on educational and career guidance only in Grades 9 and 12 students.": 4,
+      "School B surveys student information individually before providing guidance services to meet students' needs.": 5,
+      "School D emphasizes promoting academic lessons to help students achieve university admission.": 4
     },
     "q2": {
-      "Career aptitude test.": 3,
-      "Providing graduation criteria": 3,
       "Providing scholarships to students. in need of financial support.": 4,
-      "Home visitation.": 2
+      "Providing graduation criteria": 4,
+      "Home visitation.": 4,
+      "Career aptitude test.": 4
     },
     "q3": {
-      "\"No one wants something like this to happen. Friends don't stay mad for long; soon, it will be forgotten. Just relax.\"": 3,
       "\"I think you should apologize to your friend for using words that hurt them first.\"": 4,
-      "\u201cYou regret it because made your friend sad; let\u2019s see how we can figure out this problem better.\u201d": 5,
-      "\"Who do you think is at fault, and who should take responsibility for solving the problem?\"": 4
+      "\"No one wants something like this to happen. Friends don't stay mad for long; soon, it will be forgotten. Just relax.\"": 5,
+      "\u201cYou regret it because made your friend sad; let\u2019s see how we can figure out this problem better.\u201d": 6,
+      "\"Who do you think is at fault, and who should take responsibility for solving the problem?\"": 5
     },
     "q4": {
-      "\"I am not free today. Come back and see me another time.\"": 3,
-      "\"I have an appointment with another student today. Would it be convenient for you to see me tomorrow after school?\"": 6,
-      "\"I have an appointment with another student today. Would you like to talk to another teacher instead?\"": 5,
-      "\"I am not free today. You should make an appointment in advance if you want to see me.\"": 5
+      "\"I am not free today. Come back and see me another time.\"": 4,
+      "\"I am not free today. You should make an appointment in advance if you want to see me.\"": 6,
+      "\"I have an appointment with another student today. Would it be convenient for you to see me tomorrow after school?\"": 7,
+      "\"I have an appointment with another student today. Would you like to talk to another teacher instead?\"": 6
     },
     "q5": {
-      "Active listening, Summarizing.": 3,
-      "Reflection of feeling, Questioning.": 2,
-      "Attending, Paraphrasing.": 0,
-      "Paraphrasing, Reflection of feeling.": 6
+      "Paraphrasing, Reflection of feeling.": 4,
+      "Reflection of feeling, Questioning.": 8,
+      "Active listening, Summarizing.": 7,
+      "Attending, Paraphrasing.": 7
     },
     "q6": {
-      "\u201cWhy did you get into a fight? Can you tell me what happened?\u201d": 3,
-      "\u201cI\u2019m concerned about you, could you tell me what is happening so we can find ways to figure it out.\u201d": 7,
-      "\u201cYou know that getting into fights at school is wrong. We need to investigate what happened.\u201d": 6,
-      "\"If you are not saying anything, I don't know how to help you.\"": 6
+      "\u201cI\u2019m concerned about you, could you tell me what is happening so we can find ways to figure it out.\u201d": 4,
+      "\u201cYou know that getting into fights at school is wrong. We need to investigate what happened.\u201d": 7,
+      "\"If you are not saying anything, I don't know how to help you.\"": 7,
+      "\u201cWhy did you get into a fight? Can you tell me what happened?\u201d": 7
     },
     "q7": {
-      "Teacher A explains her confidentiality limitation to the students who receive online counseling.": 3,
-      "Teacher C continuously counsels his student, even though he acknowledges that he is not an expert in this area.": 6,
-      "Teacher D discusses the student's problem with other teachers to collectively find a solution for the student.": 6,
-      "Teacher B always records her students\u2019 voices as evidence without telling them.": 6
+      "Teacher A explains her confidentiality limitation to the students who receive online counseling.": 4,
+      "Teacher B always records her students\u2019 voices as evidence without telling them.": 7,
+      "Teacher D discusses the student's problem with other teachers to collectively find a solution for the student.": 7,
+      "Teacher C continuously counsels his student, even though he acknowledges that he is not an expert in this area.": 7
     },
     "q8": {
-      "To emphasize preventing and encouraging emotional and social learning, including resilience in students and teachers.": 3,
-      "To emphasize emotional and social learning, and to form resilience against mental health troubles in students.": 6,
-      "To emphasize creating positive attitudes toward others, self-value awareness, and positive thinking maintenance.": 6
+      "To emphasize preventing and encouraging emotional and social learning, including resilience in students and teachers.": 4,
+      "To emphasize emotional and social learning, and to form resilience against mental health troubles in students.": 7,
+      "To emphasize behavior issues, emotions, and society, especially stress, anxiousness, depression, and bullying.": 7,
+      "To emphasize creating positive attitudes toward others, self-value awareness, and positive thinking maintenance.": 7
     },
     "q9": {
-      "Mental health untreated -> mind fragility -> problems coping": 3
+      "Traumatic disorders -> problems coping -> not received assistance": 4,
+      "Received trauma impact -> perception in situation -> incapable of solving the problems in the current methods used.": 9,
+      "Mental health untreated -> mind fragility -> problems coping": 8,
+      "Pressure environment -> pessimism -> mind fragility": 8
     },
     "q10": {
-      "Emotional surveys through deep and understanding listening.": 3
+      "Emotional surveys through deep and understanding listening.": 4,
+      "Indicates urgent crises and organizes problem-solving procedures.": 9,
+      "Assessment of self-harm and life-riskiness.": 2,
+      "Discussion to find the problem-solving while using previous methods of solving.": 0
     }
   },
   "test_history": [
     {
-      "timestamp": "2026-01-17T23:31:02.998291",
-      "score": 3,
-      "total": 10,
-      "tested_options": {
-        "q1": "School B surveys student information individually ...",
-        "q2": "Career aptitude test.",
-        "q3": "\"No one wants something like this to happen. Frien...",
-        "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:32:19.204584",
-      "score": 2,
-      "total": 10,
-      "tested_options": {
-        "q1": "School A focuses on educational and career guidanc...",
-        "q2": "Career aptitude test.",
-        "q3": "\"No one wants something like this to happen. Frien...",
-        "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:33:35.375753",
-      "score": 2,
+      "timestamp": "2026-01-18T00:09:44.840337",
+      "score": 4,
       "total": 10,
       "tested_options": {
         "q1": "School C allows students\u2019 instructors to provide a...",
-        "q2": "Career aptitude test.",
-        "q3": "\"No one wants something like this to happen. Frien...",
-        "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:34:55.921836",
-      "score": 2,
-      "total": 10,
-      "tested_options": {
-        "q1": "School D emphasizes promoting academic lessons to ...",
-        "q2": "Career aptitude test.",
-        "q3": "\"No one wants something like this to happen. Frien...",
-        "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:36:12.247786",
-      "score": 3,
-      "total": 10,
-      "tested_options": {
-        "q1": "School B surveys student information individually ...",
-        "q2": "Providing graduation criteria",
-        "q3": "\"No one wants something like this to happen. Frien...",
-        "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:37:28.528842",
-      "score": 4,
-      "total": 10,
-      "tested_options": {
-        "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
-        "q3": "\"No one wants something like this to happen. Frien...",
+        "q3": "\"I think you should apologize to your friend for u...",
         "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:39:11.742549",
-      "score": 2,
-      "total": 5,
-      "tested_options": {
-        "q1": "School B surveys student information individually ...",
-        "q2": "Home visitation.",
-        "q3": "\"No one wants something like this to happen. Frien...",
-        "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:41:35.081112",
+      "timestamp": "2026-01-18T00:10:32.198465",
       "score": 4,
+      "total": 10,
+      "tested_options": {
+        "q1": "School A focuses on educational and career guidanc...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\"I think you should apologize to your friend for u...",
+        "q4": "\"I am not free today. Come back and see me another...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:11:51.967351",
+      "score": 5,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\"I think you should apologize to your friend for u...",
         "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:42:51.307898",
+      "timestamp": "2026-01-18T00:12:39.099138",
+      "score": 4,
+      "total": 10,
+      "tested_options": {
+        "q1": "School D emphasizes promoting academic lessons to ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\"I think you should apologize to your friend for u...",
+        "q4": "\"I am not free today. Come back and see me another...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:14:03.198444",
+      "score": 4,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing graduation criteria",
+        "q3": "\"I think you should apologize to your friend for u...",
+        "q4": "\"I am not free today. Come back and see me another...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:14:52.408453",
+      "score": 4,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Home visitation.",
+        "q3": "\"I think you should apologize to your friend for u...",
+        "q4": "\"I am not free today. Come back and see me another...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:16:04.909118",
+      "score": 4,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Career aptitude test.",
+        "q3": "\"I think you should apologize to your friend for u...",
+        "q4": "\"I am not free today. Come back and see me another...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:16:59.450177",
       "score": 5,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
-        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q3": "\"No one wants something like this to happen. Frien...",
         "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:44:07.504642",
-      "score": 4,
-      "total": 10,
-      "tested_options": {
-        "q1": "School B surveys student information individually ...",
-        "q2": "Providing scholarships to students. in need of fin...",
-        "q3": "\"Who do you think is at fault, and who should take...",
-        "q4": "\"I am not free today. Come back and see me another...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:45:23.654983",
+      "timestamp": "2026-01-18T00:18:25.747436",
       "score": 6,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
-        "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q4": "\"I am not free today. Come back and see me another...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:46:39.852155",
+      "timestamp": "2026-01-18T00:20:11.952395",
       "score": 5,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
-        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
-        "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q3": "\"Who do you think is at fault, and who should take...",
+        "q4": "\"I am not free today. Come back and see me another...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:47:56.001438",
-      "score": 5,
+      "timestamp": "2026-01-18T00:21:26.300837",
+      "score": 6,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I am not free today. You should make an appointme...",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:49:54.749486",
-      "score": 2,
-      "total": 5,
-      "tested_options": {
-        "q1": "School B surveys student information individually ...",
-        "q2": "Providing scholarships to students. in need of fin...",
-        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
-        "q4": "\"I have an appointment with another student today....",
-        "q5": "Reflection of feeling, Questioning.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
-        "q7": "Teacher A explains her confidentiality limitation ...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-17T23:50:41.719724",
-      "score": 0,
+      "timestamp": "2026-01-18T00:25:43.206727",
+      "score": 7,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
-        "q5": "Attending, Paraphrasing.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q5": "Paraphrasing, Reflection of feeling.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:52:53.789929",
+      "timestamp": "2026-01-18T00:26:30.275712",
       "score": 6,
       "total": 10,
       "tested_options": {
@@ -337,15 +293,32 @@
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
         "q5": "Paraphrasing, Reflection of feeling.",
-        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:54:10.130427",
+      "timestamp": "2026-01-18T00:27:31.078172",
+      "score": 8,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:28:19.980727",
       "score": 7,
       "total": 10,
       "tested_options": {
@@ -357,132 +330,285 @@
         "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:55:26.509250",
-      "score": 6,
+      "timestamp": "2026-01-18T00:29:17.501267",
+      "score": 7,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
+        "q5": "Attending, Paraphrasing.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:30:44.966674",
+      "score": 7,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
         "q6": "\u201cYou know that getting into fights at school is wr...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:56:42.881632",
-      "score": 6,
+      "timestamp": "2026-01-18T00:31:46.927569",
+      "score": 7,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
+        "q5": "Reflection of feeling, Questioning.",
         "q6": "\"If you are not saying anything, I don't know how ...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:57:59.234870",
-      "score": 6,
+      "timestamp": "2026-01-18T00:32:33.798353",
+      "score": 7,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
-        "q7": "Teacher C continuously counsels his student, even ...",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cWhy did you get into a fight? Can you tell me wha...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-17T23:59:15.594058",
-      "score": 6,
+      "timestamp": "2026-01-18T00:33:43.940086",
+      "score": 7,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
-        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
-        "q7": "Teacher D discusses the student's problem with oth...",
-        "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
-        "q10": "Emotional surveys through deep and understanding l..."
-      }
-    },
-    {
-      "timestamp": "2026-01-18T00:00:32.030055",
-      "score": 6,
-      "total": 10,
-      "tested_options": {
-        "q1": "School B surveys student information individually ...",
-        "q2": "Providing scholarships to students. in need of fin...",
-        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
-        "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
+        "q5": "Reflection of feeling, Questioning.",
         "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher B always records her students\u2019 voices as e...",
         "q8": "To emphasize preventing and encouraging emotional ...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-18T00:01:48.476637",
-      "score": 6,
+      "timestamp": "2026-01-18T00:35:18.063944",
+      "score": 7,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher D discusses the student's problem with oth...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:37:04.957485",
+      "score": 7,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher C continuously counsels his student, even ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:38:50.458311",
+      "score": 7,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
         "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize emotional and social learning, and to...",
-        "q9": "Mental health untreated -> mind fragility -> probl...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
         "q10": "Emotional surveys through deep and understanding l..."
       }
     },
     {
-      "timestamp": "2026-01-18T00:03:04.842809",
-      "score": 6,
+      "timestamp": "2026-01-18T00:40:02.583433",
+      "score": 7,
       "total": 10,
       "tested_options": {
         "q1": "School B surveys student information individually ...",
         "q2": "Providing scholarships to students. in need of fin...",
         "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
         "q4": "\"I have an appointment with another student today....",
-        "q5": "Active listening, Summarizing.",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize behavior issues, emotions, and societ...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:41:32.633103",
+      "score": 7,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
         "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
         "q7": "Teacher A explains her confidentiality limitation ...",
         "q8": "To emphasize creating positive attitudes toward ot...",
+        "q9": "Traumatic disorders -> problems coping -> not rece...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:43:04.240698",
+      "score": 9,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Received trauma impact -> perception in situation ...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:44:28.661080",
+      "score": 8,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
         "q9": "Mental health untreated -> mind fragility -> probl...",
         "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:45:30.438375",
+      "score": 8,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Pressure environment -> pessimism -> mind fragilit...",
+        "q10": "Emotional surveys through deep and understanding l..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:46:44.942304",
+      "score": 9,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Received trauma impact -> perception in situation ...",
+        "q10": "Indicates urgent crises and organizes problem-solv..."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:47:33.326065",
+      "score": 2,
+      "total": 5,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Received trauma impact -> perception in situation ...",
+        "q10": "Assessment of self-harm and life-riskiness."
+      }
+    },
+    {
+      "timestamp": "2026-01-18T00:49:47.127916",
+      "score": 0,
+      "total": 10,
+      "tested_options": {
+        "q1": "School B surveys student information individually ...",
+        "q2": "Providing scholarships to students. in need of fin...",
+        "q3": "\u201cYou regret it because made your friend sad; let\u2019s...",
+        "q4": "\"I have an appointment with another student today....",
+        "q5": "Reflection of feeling, Questioning.",
+        "q6": "\u201cI\u2019m concerned about you, could you tell me what i...",
+        "q7": "Teacher A explains her confidentiality limitation ...",
+        "q8": "To emphasize preventing and encouraging emotional ...",
+        "q9": "Received trauma impact -> perception in situation ...",
+        "q10": "Discussion to find the problem-solving while using..."
       }
     }
   ],
   "perfect_score_achieved": false,
-  "last_score": 6,
+  "last_score": 0,
   "unconfirmed_questions": [
     "q1",
     "q2",

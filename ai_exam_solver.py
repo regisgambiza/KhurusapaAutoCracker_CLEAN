@@ -1,4 +1,4 @@
-"""AI-Powered Exam Solver using Ollama llama3.1:8b - IMPROVED VERSION"""
+"""AI-Powered Exam Solver with Smart Navigation using Ollama llama3.1:8b"""
 
 import logging
 import json
@@ -8,6 +8,7 @@ import os
 from typing import Dict, List, Tuple, Optional, Set
 from datetime import datetime
 import requests
+from ai_navigation_helper import AINavigationHelper
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +103,6 @@ class SequentialEliminationSolver:
         test_answers = self.state['best_answers'].copy()
         
         # Find which question to vary next
-        # Strategy: For each question, try all options and pick the one that gives best score
         focus_q_id = None
         next_option = None
         
@@ -132,14 +132,13 @@ class SequentialEliminationSolver:
             logger.info("⚠️ All options tried individually. Starting combination testing...")
             
             # Generate a new combination to test
-            # Use a counter to systematically try different combinations
             if 'combination_counter' not in self.state:
                 self.state['combination_counter'] = 0
             
             self.state['combination_counter'] += 1
             counter = self.state['combination_counter']
             
-            # Convert counter to base-4 to generate different combinations
+            # Convert counter to generate different combinations
             for i in range(self.state['total_questions']):
                 q_id = f"q{i+1}"
                 question = next((q for q in self.questions if q['id'] == q_id), None)
@@ -151,59 +150,6 @@ class SequentialEliminationSolver:
             logger.info(f"🔄 Testing combination #{counter}")
         
         return test_answers
-    
-    def _get_next_question_to_test(self) -> Optional[str]:
-        """Find which question to test next - prioritize least-tested questions."""
-        # Find questions that haven't been fully explored
-        min_tested = float('inf')
-        next_q = None
-        
-        for i in range(self.state['total_questions']):
-            q_id = f"q{i+1}"
-            if q_id not in self.state['confirmed_answers']:
-                question = next((q for q in self.questions if q['id'] == q_id), None)
-                if question:
-                    tried_count = len(self.state['question_scores'].get(q_id, {}))
-                    total_options = len(question['options'])
-                    
-                    # Prioritize questions with fewer tested options
-                    if tried_count < total_options and tried_count < min_tested:
-                        min_tested = tried_count
-                        next_q = q_id
-        
-        # If all questions fully tested, return first unconfirmed
-        if next_q is None:
-            for i in range(self.state['total_questions']):
-                q_id = f"q{i+1}"
-                if q_id not in self.state['confirmed_answers']:
-                    return q_id
-        
-        return next_q
-    
-    def _get_next_option_to_try(self, q_id: str) -> Optional[str]:
-        """Get next option to try for a question."""
-        question = next((q for q in self.questions if q['id'] == q_id), None)
-        if not question:
-            return None
-        
-        # Find options we haven't tried yet
-        tried_options = set(self.state['question_scores'].get(q_id, {}).keys())
-        all_options = [opt['text'] for opt in question['options']]
-        
-        # Return first untried option
-        for option in all_options:
-            if option not in tried_options:
-                return option
-        
-        # All options tried - return the one with best score
-        if self.state['question_scores'].get(q_id):
-            best_option = max(
-                self.state['question_scores'][q_id].items(),
-                key=lambda x: x[1]
-            )[0]
-            return best_option
-        
-        return all_options[0]
     
     def process_result(self, score: int, total: int, tested_options: Dict[str, str]):
         """Process test result - ONLY confirm when perfect score achieved."""
@@ -221,7 +167,7 @@ class SequentialEliminationSolver:
         # Update last score
         self.state['last_score'] = score
         
-        # CHECK FOR PERFECT SCORE - This is the ONLY way to confirm answers
+        # CHECK FOR PERFECT SCORE
         if score == total:
             logger.info("🎉 PERFECT SCORE ACHIEVED! All answers are now CONFIRMED!")
             self.state['perfect_score_achieved'] = True
@@ -237,13 +183,11 @@ class SequentialEliminationSolver:
                 'perfect_score': True
             }
         
-        # CRITICAL FIX: Track EVERY option that was tested, not just changed ones
         # Record score for ALL tested options
         for q_id, option in tested_options.items():
             if q_id not in self.state['question_scores']:
                 self.state['question_scores'][q_id] = {}
             
-            # Only record if this is a new option we haven't tried
             if option not in self.state['question_scores'][q_id]:
                 self.state['question_scores'][q_id][option] = score
                 
@@ -312,7 +256,6 @@ Confirmed: {confirmed}/{total}
                 question = next((q for q in self.questions if q['id'] == q_id), None)
                 total_opts = len(question['options']) if question else 0
                 
-                # Show score info for this question's options
                 q_scores = self.state.get('question_scores', {}).get(q_id, {})
                 if q_scores:
                     best_opt_score = max(q_scores.values()) if q_scores else 0
@@ -346,46 +289,22 @@ class OllamaAI:
         except Exception as e:
             logger.error(f"Ollama API error: {e}")
             return ""
-    
-    def answer_question(self, question: str, options: List[str]) -> Tuple[int, str]:
-        options_text = "\n".join([f"{chr(65+i)}. {opt}" for i, opt in enumerate(options)])
-        
-        prompt = f"""You are taking an exam. Answer this multiple choice question by selecting the BEST answer.
-
-Question: {question}
-
-Options:
-{options_text}
-
-Respond ONLY with a JSON object in this exact format:
-{{"answer": "A", "reasoning": "brief explanation"}}
-
-Choose the letter (A, B, C, D, etc.) that corresponds to the best answer."""
-
-        response = self.ask(prompt, temperature=0.2)
-        
-        try:
-            json_match = re.search(r'\{.*\}', response, re.DOTALL)
-            if json_match:
-                result = json.loads(json_match.group())
-                answer_letter = result.get("answer", "A").upper().strip()
-                reasoning = result.get("reasoning", "No reasoning provided")
-                answer_index = ord(answer_letter) - 65
-                if 0 <= answer_index < len(options):
-                    return answer_index, reasoning
-        except Exception as e:
-            logger.error(f"Failed to parse AI response: {e}")
-        
-        return 0, "Default to first option"
 
 
 class QuestionExtractor:
     @staticmethod
-    def extract_questions(page, num_questions: int = 10) -> List[Dict]:
+    def extract_questions(page, num_questions: int = 10, nav_helper: AINavigationHelper = None) -> List[Dict]:
         questions = []
 
-        # Wait for inputs to be present
-        page.wait_for_selector("input[type='radio'], input[type='checkbox']", timeout=10000)
+        # Use AI to verify page is ready before extraction
+        if nav_helper:
+            logger.info("🔍 Verifying page is ready for question extraction...")
+            if not nav_helper.verify_quiz_ready(page, max_attempts=5):
+                logger.error("❌ Page not ready for question extraction!")
+                return []
+        else:
+            # Fallback to basic wait
+            page.wait_for_selector("input[type='radio'], input[type='checkbox']", timeout=10000)
 
         # Take a snapshot
         all_inputs = page.locator("input[type='radio'], input[type='checkbox']")
@@ -429,9 +348,10 @@ class QuestionExtractor:
 
 
 class AIExamSolver:
-    def __init__(self, page, ai: OllamaAI):
+    def __init__(self, page, ai: OllamaAI, nav_helper: AINavigationHelper = None):
         self.page = page
         self.ai = ai
+        self.nav_helper = nav_helper or AINavigationHelper()
         self.questions: List[Dict] = []
         self.answers: Dict[str, Dict] = {}
         self.sequential_solver = None
@@ -441,7 +361,7 @@ class AIExamSolver:
 
     def analyze_exam(self, num_questions: int = 10) -> bool:
         logger.info(f"[*] Extracting questions (expecting {num_questions})...")
-        self.questions = QuestionExtractor.extract_questions(self.page, num_questions)
+        self.questions = QuestionExtractor.extract_questions(self.page, num_questions, self.nav_helper)
         if not self.questions:
             logger.error("Failed to extract any questions!")
             return False
@@ -456,14 +376,11 @@ class AIExamSolver:
             self.sequential_solver = SequentialEliminationSolver(self.questions)
             logger.info("[NEW SOLVER] Improved sequential solver initialized")
         
-        # Update last score if provided
         if last_score is not None:
             self.last_score = last_score
         
-        # Get test set
         test_answers = self.sequential_solver.get_test_set(self.last_score)
         
-        # Check if we're done
         if self.sequential_solver.state.get('perfect_score_achieved', False):
             logger.info("[DONE] Perfect score already achieved!")
             self.perfect_score_achieved = True
@@ -482,7 +399,6 @@ class AIExamSolver:
                         'answer_index': answer_idx
                     }
                 else:
-                    # Fallback to first option
                     self.answers[q_id] = {
                         'option_text': question['options'][0]['text'],
                         'answer_index': 0
@@ -494,20 +410,16 @@ class AIExamSolver:
     def process_attempt_result(self, score: int, total: int):
         """Process attempt result using sequential solver."""
         if self.sequential_solver is not None:
-            # Update last score
             self.last_score = score
             
-            # Get what options were tested
             tested_options = {}
             for q in self.questions:
                 q_id = q['id']
                 if q_id in self.answers:
                     tested_options[q_id] = self.answers[q_id]['option_text']
             
-            # Process result
             result = self.sequential_solver.process_result(score, total, tested_options)
             
-            # Check if perfect score was achieved
             if result.get('perfect_score', False):
                 self.perfect_score_achieved = True
             
@@ -526,7 +438,7 @@ class AIExamSolver:
                 continue
 
             target_text = self.answers[qid]['option_text'].strip()
-            target_text = ' '.join(target_text.split())  # normalize spaces
+            target_text = ' '.join(target_text.split())
 
             logger.info(f"  Trying to click for {qid}: '{target_text[:70]}...'")
 
@@ -535,13 +447,12 @@ class AIExamSolver:
             if "all" in target_lower and "answer" in target_lower and "correct" in target_lower:
                 if self._click_all_answers_correct_by_index(q, target_text):
                     success_count += 1
-                    time.sleep(5)
+                    time.sleep(2)
                     continue
 
-            # Regular clicking for other answers
             if self._click_by_text(target_text):
                 success_count += 1
-                time.sleep(5)
+                time.sleep(2)
             else:
                 logger.error(f"Failed to click answer for {qid}: '{target_text[:60]}...'")
 
@@ -556,7 +467,6 @@ class AIExamSolver:
             
             logger.info(f"[SPECIAL] Handling 'All answers correct' for {qid}")
             
-            # Find which index contains "All the answers are correct"
             target_index = None
             for idx, opt in enumerate(options):
                 opt_text = opt['text'].strip().lower()
@@ -569,7 +479,6 @@ class AIExamSolver:
                 logger.error(f"  Could not find 'All answers correct' in options!")
                 return False
             
-            # Calculate global input index
             all_inputs = self.page.locator("input[type='radio'], input[type='checkbox']")
             total_inputs = all_inputs.count()
             
@@ -578,22 +487,13 @@ class AIExamSolver:
             
             global_input_index = (q_num * options_per_question) + target_index
             
-            logger.info(f"  Question {qid} (q_num={q_num}), target_index={target_index}")
-            logger.info(f"  Global input index: {global_input_index} (total inputs: {total_inputs})")
-            
             if global_input_index >= total_inputs:
                 logger.error(f"  Calculated index {global_input_index} exceeds total inputs {total_inputs}")
                 return False
             
-            # Try multiple click strategies
             click_strategies = [
-                # Strategy 1: Click input directly
                 lambda: all_inputs.nth(global_input_index).click(force=True, timeout=3000),
-                
-                # Strategy 2: Click via label with same index
                 lambda: self.page.locator("label").nth(global_input_index).click(force=True, timeout=3000),
-                
-                # Strategy 3: Try to find label with matching text
                 lambda: self._click_by_text(question['options'][target_index]['text'])
             ]
             
@@ -616,10 +516,8 @@ class AIExamSolver:
     def _click_by_text(self, target_text: str) -> bool:
         """Click a label by its text content."""
         try:
-            # Clean the target text for matching
             clean_target = ' '.join(target_text.split())
             
-            # Try exact match first
             labels = self.page.locator("label").all()
             for label in labels:
                 try:
@@ -633,7 +531,6 @@ class AIExamSolver:
                 except:
                     continue
             
-            # Try partial match for longer texts
             if len(clean_target) > 20:
                 partial = clean_target[:40]
                 for label in labels:
@@ -654,7 +551,7 @@ class AIExamSolver:
             return False
 
     def submit_and_check(self) -> Tuple[int, int, bool]:
-        """Submit answers and check score with improved parsing."""
+        """Submit answers and check score with AI-powered verification."""
         max_retries = 3
         
         for retry in range(max_retries):
@@ -674,7 +571,7 @@ class AIExamSolver:
                     try:
                         selector()
                         clicked = True
-                        time.sleep(5)
+                        logger.info("✓ Submit button clicked")
                         break
                     except Exception as e:
                         logger.debug(f"Submit selector failed: {e}")
@@ -689,7 +586,7 @@ class AIExamSolver:
                             if any(word in btn_text for word in ["submit", "finish", "send", "complete"]):
                                 all_buttons.nth(i).click()
                                 clicked = True
-                                time.sleep(5)
+                                logger.info("✓ Submit button clicked (fallback)")
                                 break
                         except:
                             continue
@@ -697,8 +594,10 @@ class AIExamSolver:
                 if not clicked:
                     raise Exception("No submit button found")
                 
-                # Wait for results
-                time.sleep(5)
+                # USE AI TO VERIFY RESULTS PAGE IS READY
+                logger.info("🔍 Waiting for results page to load...")
+                if not self.nav_helper.verify_results_ready(self.page, max_attempts=5):
+                    logger.warning("⚠️  Results page verification uncertain, continuing anyway...")
                 
                 # Try to find score in the page
                 page_text = self.page.inner_text("body")
@@ -706,11 +605,11 @@ class AIExamSolver:
                 
                 # Try different score patterns
                 score_patterns = [
-                    r'(\d+)\s*\/\s*(\d+)',
-                    r'Score:\s*(\d+)\s*\/\s*(\d+)',
+                    r'(\d+)\s*/\s*(\d+)',
+                    r'Score:\s*(\d+)\s*/\s*(\d+)',
                     r'(\d+)\s*of\s*(\d+)',
-                    r'Result:\s*(\d+)\s*\/\s*(\d+)',
-                    r'Your score:\s*(\d+)\s*\/\s*(\d+)',
+                    r'Result:\s*(\d+)\s*/\s*(\d+)',
+                    r'Your score:\s*(\d+)\s*/\s*(\d+)',
                     r'(\d+)\s*out of\s*(\d+)',
                 ]
                 
@@ -723,7 +622,7 @@ class AIExamSolver:
                                     score_val = int(match[0])
                                     total_val = int(match[1])
                                     if 0 <= score_val <= total_val and total_val <= self.num_questions * 2:
-                                        logger.info(f"Found score with pattern '{pattern}': {score_val}/{total_val}")
+                                        logger.info(f"✓ Found score: {score_val}/{total_val}")
                                         return score_val, total_val, score_val == total_val
                                 except ValueError:
                                     continue
@@ -736,14 +635,14 @@ class AIExamSolver:
                             score_val = int(all_numbers[i])
                             total_val = int(all_numbers[i+1])
                             if 0 <= score_val <= total_val and total_val <= self.num_questions * 2:
-                                logger.info(f"Found score as number pair: {score_val}/{total_val}")
+                                logger.info(f"✓ Found score (number pair): {score_val}/{total_val}")
                                 return score_val, total_val, score_val == total_val
                         except ValueError:
                             continue
                 
                 # Check for success message
                 if any(word in page_text.lower() for word in ["passed", "success", "completed", "perfect"]):
-                    logger.info("Found success message, assuming perfect score")
+                    logger.info("✓ Found success message, assuming perfect score")
                     return self.num_questions, self.num_questions, True
                 
                 raise Exception(f"Score not found in page text")
@@ -751,71 +650,52 @@ class AIExamSolver:
             except Exception as e:
                 logger.error(f"Submit/check failed (attempt {retry + 1}): {e}")
                 if retry < max_retries - 1:
-                    time.sleep(5)
+                    time.sleep(3)
                     continue
         
         logger.error("Failed to get score after all retries")
         return 0, self.num_questions, False
 
     def retest(self, num_questions: int = 10) -> bool:
-        """Reset the exam for next attempt."""
+        """Reset the exam for next attempt with AI-powered verification."""
         try:
-            logger.info("Retesting → looking for reset button...")
+            logger.info("🔄 Retesting → looking for reset button...")
             
             retest_selectors = [
                 lambda: self.page.get_by_role("button", name=re.compile(r"retest|try again|redo|restart|again|new attempt", re.I)).first.click(),
                 lambda: self.page.get_by_text(re.compile(r"retest|try again|redo", re.I)).first.click(),
                 lambda: self.page.get_by_role("link", name=re.compile(r"retake|try again", re.I)).first.click(),
             ]
-            
-            time.sleep(5)
-
 
             clicked = False
             for selector in retest_selectors:
                 try:
                     selector()
                     clicked = True
-                    time.sleep(5)
+                    logger.info("✓ Retest button clicked")
                     break
                 except:
                     continue
             
             if not clicked:
-                logger.warning("No retest button found, trying to reload page")
+                logger.warning("⚠️  No retest button found, trying to reload page")
                 self.page.reload()
-                time.sleep(5)
             
-            # Wait for page to load
-            self.page.wait_for_load_state("networkidle", timeout=30000)
-
-            # CRITICAL: Wait for quiz elements to actually appear
-            logger.info("Waiting for quiz elements to appear...")
-            try:
-                self.page.wait_for_selector(
-                    "input[type='radio'], input[type='checkbox']", 
-                    state="visible",
-                    timeout=30000
-                )
-                logger.info("✓ Quiz elements detected")
-                
-                # Extra wait to ensure all elements are rendered
-                time.sleep(5)
-                
-            except Exception as e:
-                logger.error(f"Quiz elements did not appear: {e}")
+            # CRITICAL: USE AI TO VERIFY QUIZ PAGE IS READY
+            logger.info("🔍 Verifying quiz page is ready after retest...")
+            if not self.nav_helper.verify_quiz_ready(self.page, max_attempts=8):
+                logger.error("❌ Quiz page not ready after retest!")
                 return False
             
             # Re-extract questions
-            self.questions = QuestionExtractor.extract_questions(self.page, num_questions)
+            self.questions = QuestionExtractor.extract_questions(self.page, num_questions, self.nav_helper)
             if not self.questions:
                 logger.error("Failed to re-extract questions!")
                 return False
             
             self.num_questions = len(self.questions)
             
-            # Keep existing solver (don't create new one)
-            logger.info("[RESET] Exam reset for next attempt")
+            logger.info("✅ Exam reset successful, quiz page ready")
             return True
             
         except Exception as e:
@@ -824,8 +704,10 @@ class AIExamSolver:
 
 
 def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 100):
+    """Run the AI-powered exam solver with smart navigation."""
     ai = OllamaAI()
-    solver = AIExamSolver(page, ai)
+    nav_helper = AINavigationHelper()
+    solver = AIExamSolver(page, ai, nav_helper)
     
     # First, extract questions
     if not solver.analyze_exam(num_questions):
@@ -841,12 +723,10 @@ def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 100):
         logger.info(f"ATTEMPT {attempt}/{max_attempts}")
         logger.info(f"{'='*80}")
         
-        # Check if we already have perfect score
         if solver.perfect_score_achieved:
             logger.info("🎉 Perfect score already achieved in previous attempt!")
             break
         
-        # Get answers for this attempt
         if not solver.get_answers_for_attempt(last_score):
             logger.info("No more answers to test or perfect score achieved")
             break
@@ -883,11 +763,14 @@ def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 100):
             logger.info("Max attempts reached.")
             break
         
-        # Retest for next attempt
-        logger.info("\nPreparing for next attempt...")
+        # Retest for next attempt WITH AI VERIFICATION
+        logger.info("\n🔄 Preparing for next attempt...")
         if not solver.retest(num_questions):
-            logger.error("Retest failed!")
+            logger.error("❌ Retest failed! Trying one more time...")
             time.sleep(5)
+            if not solver.retest(num_questions):
+                logger.error("❌ Retest failed again! Stopping.")
+                break
     
     logger.info("\n" + "="*80)
     logger.info("EXAM SOLVING COMPLETED")
@@ -901,7 +784,7 @@ def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 100):
         if solver.perfect_score_achieved:
             logger.info("✅ PERFECT SCORE ACHIEVED!")
         else:
-            logger.info(f"⚠️ Best score achieved: {solver.sequential_solver.state.get('best_score', 0)}/{num_questions}")
+            logger.info(f"⚠️  Best score achieved: {solver.sequential_solver.state.get('best_score', 0)}/{num_questions}")
     
     logger.info(f"Final score: {last_score}/{num_questions}")
     logger.info(f"Total attempts: {attempt}")
