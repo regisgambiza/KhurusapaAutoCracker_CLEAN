@@ -129,14 +129,26 @@ class SequentialEliminationSolver:
         
         # If all questions have been tried with all options, pick best combination
         if focus_q_id is None:
-            logger.info("⚠️ All options tried for all questions. Using best known combination.")
-            # For each question, pick the option that gave the best score
+            logger.info("⚠️ All options tried individually. Starting combination testing...")
+            
+            # Generate a new combination to test
+            # Use a counter to systematically try different combinations
+            if 'combination_counter' not in self.state:
+                self.state['combination_counter'] = 0
+            
+            self.state['combination_counter'] += 1
+            counter = self.state['combination_counter']
+            
+            # Convert counter to base-4 to generate different combinations
             for i in range(self.state['total_questions']):
                 q_id = f"q{i+1}"
-                q_scores = self.state['question_scores'].get(q_id, {})
-                if q_scores:
-                    best_option = max(q_scores.items(), key=lambda x: x[1])[0]
-                    test_answers[q_id] = best_option
+                question = next((q for q in self.questions if q['id'] == q_id), None)
+                if question:
+                    num_options = len(question['options'])
+                    option_index = (counter // (num_options ** i)) % num_options
+                    test_answers[q_id] = question['options'][option_index]['text']
+            
+            logger.info(f"🔄 Testing combination #{counter}")
         
         return test_answers
     
@@ -523,13 +535,13 @@ class AIExamSolver:
             if "all" in target_lower and "answer" in target_lower and "correct" in target_lower:
                 if self._click_all_answers_correct_by_index(q, target_text):
                     success_count += 1
-                    time.sleep(0.5)
+                    time.sleep(5)
                     continue
 
             # Regular clicking for other answers
             if self._click_by_text(target_text):
                 success_count += 1
-                time.sleep(0.5)
+                time.sleep(5)
             else:
                 logger.error(f"Failed to click answer for {qid}: '{target_text[:60]}...'")
 
@@ -662,7 +674,7 @@ class AIExamSolver:
                     try:
                         selector()
                         clicked = True
-                        time.sleep(2)
+                        time.sleep(5)
                         break
                     except Exception as e:
                         logger.debug(f"Submit selector failed: {e}")
@@ -677,7 +689,7 @@ class AIExamSolver:
                             if any(word in btn_text for word in ["submit", "finish", "send", "complete"]):
                                 all_buttons.nth(i).click()
                                 clicked = True
-                                time.sleep(2)
+                                time.sleep(5)
                                 break
                         except:
                             continue
@@ -686,7 +698,7 @@ class AIExamSolver:
                     raise Exception("No submit button found")
                 
                 # Wait for results
-                time.sleep(3)
+                time.sleep(5)
                 
                 # Try to find score in the page
                 page_text = self.page.inner_text("body")
@@ -739,7 +751,7 @@ class AIExamSolver:
             except Exception as e:
                 logger.error(f"Submit/check failed (attempt {retry + 1}): {e}")
                 if retry < max_retries - 1:
-                    time.sleep(2)
+                    time.sleep(5)
                     continue
         
         logger.error("Failed to get score after all retries")
@@ -756,12 +768,15 @@ class AIExamSolver:
                 lambda: self.page.get_by_role("link", name=re.compile(r"retake|try again", re.I)).first.click(),
             ]
             
+            time.sleep(5)
+
+
             clicked = False
             for selector in retest_selectors:
                 try:
                     selector()
                     clicked = True
-                    time.sleep(2.5)
+                    time.sleep(5)
                     break
                 except:
                     continue
@@ -769,10 +784,27 @@ class AIExamSolver:
             if not clicked:
                 logger.warning("No retest button found, trying to reload page")
                 self.page.reload()
-                time.sleep(3)
+                time.sleep(5)
             
             # Wait for page to load
-            self.page.wait_for_load_state("networkidle", timeout=15000)
+            self.page.wait_for_load_state("networkidle", timeout=30000)
+
+            # CRITICAL: Wait for quiz elements to actually appear
+            logger.info("Waiting for quiz elements to appear...")
+            try:
+                self.page.wait_for_selector(
+                    "input[type='radio'], input[type='checkbox']", 
+                    state="visible",
+                    timeout=30000
+                )
+                logger.info("✓ Quiz elements detected")
+                
+                # Extra wait to ensure all elements are rendered
+                time.sleep(5)
+                
+            except Exception as e:
+                logger.error(f"Quiz elements did not appear: {e}")
+                return False
             
             # Re-extract questions
             self.questions = QuestionExtractor.extract_questions(self.page, num_questions)
@@ -855,7 +887,7 @@ def run_ai_solver(page, num_questions: int = 10, max_attempts: int = 100):
         logger.info("\nPreparing for next attempt...")
         if not solver.retest(num_questions):
             logger.error("Retest failed!")
-            time.sleep(3)
+            time.sleep(5)
     
     logger.info("\n" + "="*80)
     logger.info("EXAM SOLVING COMPLETED")

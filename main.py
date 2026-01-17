@@ -23,9 +23,13 @@ def main():
     logger.info("="*80)
     
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=HEADLESS_MODE)
-        context = browser.new_context()
+        browser = playwright.chromium.launch(
+            headless=HEADLESS_MODE,
+            args=["--start-maximized"]
+        )
+        context = browser.new_context(viewport=None)
         page = context.new_page()
+
         
         try:
             # Step 1: Login
